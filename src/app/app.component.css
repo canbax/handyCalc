@@ -1,0 +1,46 @@
+mat-form-field {
+  margin-right: 12px;
+}
+
+mat-radio-group {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+mat-radio-button {
+  margin: 5px;
+}
+
+.editor {
+  display: block;
+}
+
+.container {
+  padding: 7px;
+}
+
+.header {
+  height: 10vh;
+}
+
+.input-result {
+  height: 30vh;
+}
+
+app-screen-keyboard {
+  height: 60vh;
+}
+
+.header-txt {
+  font-size: small;
+}
+
+.result-txt {
+  font-size: x-large;
+  align-items: baseline;
+}
+
+.result-panel {
+  size: 3;
+}
