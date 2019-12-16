@@ -10,7 +10,7 @@ export class ScreenKeyboardComponent implements OnInit {
   @Input() currInp: string;
   @Output() screenKeyClicked = new EventEmitter<string>();
   @ViewChild('mainDiv', { static: false }) myDiv: ElementRef<HTMLElement>;
-  private tiles: iKey[];
+  tiles: iKey[];
 
   constructor() {
     this.tiles = [
@@ -45,7 +45,7 @@ export class ScreenKeyboardComponent implements OnInit {
   ngOnInit() {
   }
 
-  private tileClicked(k: iKey) {
+  tileClicked(k: iKey) {
     this.screenKeyClicked.emit(k.fn(this.currInp));
   }
 

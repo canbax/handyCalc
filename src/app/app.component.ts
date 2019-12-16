@@ -13,12 +13,12 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  private result: string;
-  private mode: string;
-  private modes: string[];
-  private inp: string = '';
+  result: string;
+  mode: string;
+  modes: string[];
+  inp: string = '';
   private modelChanged: Subject<string> = new Subject<string>();
-  private isOpen: boolean;
+  isOpen: boolean;
   @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize;
   @ViewChild(ScreenKeyboardComponent, { static: false }) 
   private _screenKeyboard: ScreenKeyboardComponent;
@@ -41,7 +41,7 @@ export class AppComponent {
       .subscribe(() => this.autosize.resizeToFitContent(true));
   }
 
-  private changed(text: string) {
+  changed(text: string) {
     this.modelChanged.next(text);
   }
 
@@ -53,7 +53,7 @@ export class AppComponent {
     }
   }
 
-  private copy(txt: string) {
+  copy(txt: string) {
     this._clipboardService.copyFromContent(txt);
     this.showSnackbar(`'${txt}' copied!`);
   }
@@ -64,16 +64,16 @@ export class AppComponent {
     });
   }
 
-  private onScreenKeyClicked(txt: string) {
+  onScreenKeyClicked(txt: string) {
     this.modelChanged.next(txt);
   }
 
-  private onKeyDown(e: KeyboardEvent) {
+  onKeyDown(e: KeyboardEvent) {
     console.log('onKeyDown: ', e);
     this._screenKeyboard.simulateKeyDown(e.key);
   }
 
-  private onKeyUp(e: KeyboardEvent) {
+  onKeyUp(e: KeyboardEvent) {
     console.log('onKeyUp: ', e);
   }
 
