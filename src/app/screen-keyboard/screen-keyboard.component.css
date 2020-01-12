@@ -10,3 +10,7 @@ button {
 mat-grid-list {
   height: 50vh;
 }
+
+.down-btn {
+    background-color: #d2d2d2;
+}

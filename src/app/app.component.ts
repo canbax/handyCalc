@@ -18,20 +18,26 @@ export class AppComponent {
   modes: string[];
   inp: string = '';
   private modelChanged: Subject<string> = new Subject<string>();
+  private keyPressed: Subject<string> = new Subject<string>();
   isOpen: boolean;
   @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize;
-  @ViewChild(ScreenKeyboardComponent, { static: false }) 
+  @ViewChild(ScreenKeyboardComponent, { static: false })
   private _screenKeyboard: ScreenKeyboardComponent;
-  
+  private readonly KEY_UP_DEBOUNCE = 510;
+  private readonly INP_CHANGE_DEBOUNCE = 300;
+
   constructor(private _ngZone: NgZone, private _clipboardService: ClipboardService, private _snackBar: MatSnackBar) {
     this.modes = ['basic', 'advanced', 'base converter'];
     this.mode = this.modes[0];
 
     this.modelChanged.pipe(
-      debounceTime(300),
+      debounceTime(this.INP_CHANGE_DEBOUNCE),
       distinctUntilChanged())
       .subscribe(x => { this.inp = x; this.compute(); });
 
+    // to prevent the glict when you press continously, debounceTime should be greater than 500ms 
+    // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
+    this.keyPressed.pipe(debounceTime(this.KEY_UP_DEBOUNCE)).subscribe(x => { this._screenKeyboard.simulateKeyPress(false, x) })
     this.isOpen = false;
   }
 
@@ -69,12 +75,20 @@ export class AppComponent {
   }
 
   onKeyDown(e: KeyboardEvent) {
-    console.log('onKeyDown: ', e);
-    this._screenKeyboard.simulateKeyDown(e.key);
+    if (e.ctrlKey || e.altKey || e.key == 'Control') {
+      return;
+    }
+    console.log('onKeyDown: ', e.key, ' ', new Date().getTime())
+    this.keyPressed.next(e.key);
+    this._screenKeyboard.simulateKeyPress(true, e.key);
   }
 
   onKeyUp(e: KeyboardEvent) {
-    console.log('onKeyUp: ', e);
+    if (e.ctrlKey || e.altKey || e.key == 'Control') {
+      return;
+    }
+    this._screenKeyboard.simulateKeyPress(false, e.key);
   }
+
 
 }
