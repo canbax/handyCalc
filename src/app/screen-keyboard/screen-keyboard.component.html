@@ -1,9 +1,9 @@
-<div #mainDiv>
+<mat-card #mainDiv>
   <mat-grid-list cols="5" rowHeight="fit">
     <mat-grid-tile *ngFor="let t of tiles">
       <button mat-button (click)="tileClicked(t)" [ngClass]="{'down-btn': t.isPressed}">
-          <div [innerHTML]="t.txt"></div>
+        <div [innerHTML]="t.txt"></div>
       </button>
     </mat-grid-tile>
   </mat-grid-list>
-</div>
+</mat-card>

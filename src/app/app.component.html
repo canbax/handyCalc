@@ -17,8 +17,8 @@
     <div class="container">
       <div class="input-result">
         <mat-form-field [style.fontSize]="16" class="editor">
-          <textarea (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-            [ngModel]='inp' (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10"></textarea>
+          <textarea (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput [ngModel]='inp'
+            (ngModelChange)='changed($event)'></textarea>
           <button mat-icon-button matSuffix (click)="copy(inp)">
             <mat-icon>file_copy</mat-icon>
           </button>

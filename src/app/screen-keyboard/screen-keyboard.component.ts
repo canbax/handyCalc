@@ -43,6 +43,7 @@ export class ScreenKeyboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    
   }
 
   tileClicked(k: CalcBtn) {

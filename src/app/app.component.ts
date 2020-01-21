@@ -1,28 +1,34 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { Component, NgZone, ViewChild } from '@angular/core';
+import { Component, NgZone, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
 import { take, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { evaluate } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
+import * as katex from 'katex';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements AfterViewChecked {
+
   result: string;
   mode: string;
   modes: string[];
   inp: string = '';
+  inpParsed: string = '';
   private modelChanged: Subject<string> = new Subject<string>();
   private keyPressed: Subject<string> = new Subject<string>();
   isOpen: boolean;
   @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize;
   @ViewChild(ScreenKeyboardComponent, { static: false })
   private _screenKeyboard: ScreenKeyboardComponent;
+  @ViewChild('userInp', { static: false })
+  private _userInp: ElementRef;
+
   private readonly KEY_UP_DEBOUNCE = 510;
   private readonly INP_CHANGE_DEBOUNCE = 300;
 
@@ -35,10 +41,19 @@ export class AppComponent {
       distinctUntilChanged())
       .subscribe(x => { this.inp = x; this.compute(); });
 
-    // to prevent the glict when you press continously, debounceTime should be greater than 500ms 
+    // to prevent the glitch when you press continously, debounceTime should be greater than 500ms 
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
     this.keyPressed.pipe(debounceTime(this.KEY_UP_DEBOUNCE)).subscribe(x => { this._screenKeyboard.simulateKeyPress(false, x) })
     this.isOpen = false;
+  }
+
+  ngAfterViewChecked(): void {
+    // katex.render("c = \\pm\\sqrt{a^2 + b^2}", this._userInp.nativeElement, {
+    //   throwOnError: false
+    // });
+    // this.inpParsed = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}", {
+    //   throwOnError: false
+    // });
   }
 
   private triggerResize() {
