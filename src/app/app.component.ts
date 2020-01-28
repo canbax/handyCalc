@@ -6,7 +6,6 @@ import { evaluate } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
-import * as katex from 'katex';
 
 @Component({
   selector: 'app-root',
@@ -43,17 +42,12 @@ export class AppComponent implements AfterViewChecked {
 
     // to prevent the glitch when you press continously, debounceTime should be greater than 500ms 
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
-    this.keyPressed.pipe(debounceTime(this.KEY_UP_DEBOUNCE)).subscribe(x => { this._screenKeyboard.simulateKeyPress(false, x) })
+    this.keyPressed.subscribe(x => setTimeout(() => { this._screenKeyboard.simulateKeyPress(false, x) }, this.KEY_UP_DEBOUNCE));
     this.isOpen = false;
   }
 
   ngAfterViewChecked(): void {
-    // katex.render("c = \\pm\\sqrt{a^2 + b^2}", this._userInp.nativeElement, {
-    //   throwOnError: false
-    // });
-    // this.inpParsed = katex.renderToString("c = \\pm\\sqrt{a^2 + b^2}", {
-    //   throwOnError: false
-    // });
+    
   }
 
   private triggerResize() {
@@ -93,7 +87,6 @@ export class AppComponent implements AfterViewChecked {
     if (e.ctrlKey || e.altKey || e.key == 'Control') {
       return;
     }
-    console.log('onKeyDown: ', e.key, ' ', new Date().getTime())
     this.keyPressed.next(e.key);
     this._screenKeyboard.simulateKeyPress(true, e.key);
   }

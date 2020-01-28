@@ -66,7 +66,6 @@ export class ScreenKeyboardComponent implements OnInit {
 
   simulateKeyPress(isDown: boolean, key: string) {
     let t = this.findTileByKey(key);
-    console.log('simulateKeyPress down: ', isDown, ' key: ', key, ' date: ', new Date().getTime());
     if (t) {
       t.isPressed = isDown;
     }
