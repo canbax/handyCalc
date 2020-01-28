@@ -81,6 +81,7 @@ export class AppComponent implements AfterViewChecked {
 
   onScreenKeyClicked(txt: string) {
     this.modelChanged.next(txt);
+    this._userInp.nativeElement.focus();
   }
 
   onKeyDown(e: KeyboardEvent) {
