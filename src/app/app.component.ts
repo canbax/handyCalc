@@ -32,7 +32,7 @@ export class AppComponent implements AfterViewChecked {
   private readonly INP_CHANGE_DEBOUNCE = 300;
 
   constructor(private _ngZone: NgZone, private _clipboardService: ClipboardService, private _snackBar: MatSnackBar) {
-    this.modes = ['basic', 'advanced', 'base converter'];
+    this.modes = ['standard'];
     this.mode = this.modes[0];
 
     this.modelChanged.pipe(
