@@ -47,7 +47,7 @@ export class AppComponent implements AfterViewChecked {
   }
 
   ngAfterViewChecked(): void {
-    
+
   }
 
   private triggerResize() {
@@ -98,6 +98,4 @@ export class AppComponent implements AfterViewChecked {
     }
     this._screenKeyboard.simulateKeyPress(false, e.key);
   }
-
-
 }

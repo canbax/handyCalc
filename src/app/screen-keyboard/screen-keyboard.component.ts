@@ -38,7 +38,7 @@ export class ScreenKeyboardComponent implements OnInit {
       { txt: '.', fn: (s) => { return s + '.' }, ids: ['.'] },
       { txt: '(', fn: (s) => { return s + '(' }, ids: ['('] },
       { txt: ')', fn: (s) => { return s + ')' }, ids: [')'] },
-      { txt: '=', fn: (s) => { return s + '=' }, ids: ['='] }
+      { txt: '%', fn: (s) => { return s + '%' }, ids: ['%'] }
     ];
   }
 

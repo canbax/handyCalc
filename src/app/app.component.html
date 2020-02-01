@@ -11,14 +11,17 @@
       <button mat-icon-button (click)="sidenav.toggle()" aria-label="Example icon-button with a heart icon">
         <mat-icon>menu</mat-icon>
       </button>
-      <span class="header-txt">Handy Calculator (0.0 beta)</span>
+      <span class="header-txt">
+        <a href="https://github.com/canbax/handyCalc" target="_blank"> Handy Calculator (0.0 beta)</a>
+      </span>
 
     </div>
     <div class="container">
       <div class="input-result">
         <mat-form-field [style.fontSize]="16" class="editor">
-          <textarea #userInp (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1"
-            [ngModel]='inp' (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10"></textarea>
+          <textarea #userInp (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput
+            cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" [ngModel]='inp'
+            (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10"></textarea>
           <button mat-icon-button matSuffix (click)="copy(inp)">
             <mat-icon>file_copy</mat-icon>
           </button>
