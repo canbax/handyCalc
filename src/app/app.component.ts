@@ -16,6 +16,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   result: string;
   mode: string;
+  degreeUnit: string = 'RAD';
+  degreeUnits: string[] = ['RAD', 'DEG', 'GRAD'];
+  isTrigonometric: boolean = false;
   modes: string[];
   inp: string = '';
   inpParsed: string = '';
@@ -68,7 +71,13 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   private compute() {
     try {
-      this.result = evaluate(this.inp);
+      let str = this.convertBrackets();
+      str = this.convert4AngleUnit();
+      this.result = evaluate(str);
+      const t = typeof this.result;
+      if (t == 'function') {
+        this.result = '';
+      }
     } catch (e) {
       console.log('e: ', e);
     }
@@ -104,4 +113,72 @@ export class AppComponent implements AfterViewChecked, OnInit {
     }
     this._screenKeyboard.simulateKeyPress(false, e.key);
   }
+
+  convert4AngleUnit() {
+    const fnList = ['sin', 'cos', 'tan'];
+    let r = this.inp;
+    this.isTrigonometric = false;
+    for (let i = 0; i < fnList.length; i++) {
+      let regexp = new RegExp(fnList[i], 'g');
+      let match: RegExpExecArray, matches = [];
+
+      while ((match = regexp.exec(r)) != null) {
+        matches.push(match.index + fnList[i].length);
+      }
+
+      if (matches.length > 0) {
+        this.isTrigonometric = true;
+      }
+
+      for (let j = 0; j < matches.length; j++) {
+        let arr = this.getExprIdxs(matches[j]);
+        console.log('first bracket: ', r[arr[0]], ' idx: ', arr[0],  ' sec bracket: ', r[arr[1]], ' idx: ', arr[1], );
+        if (arr[1] - arr[0] > 0) {
+          let s0 = r.slice(0, arr[0] + 1);
+          let s1 = r.slice(arr[0] + 1, arr[1]);
+          let s2 = r.slice(arr[1] + 1, r.length);
+          r = s0 + 'unit(' + s1 + `,'` + this.degreeUnit.toLowerCase() + `')` + s2;
+        }
+      }
+    }
+    return r;
+  }
+
+  convertBrackets(): string {
+    let str = this.inp;
+    str = str.replace(/{/g, '(');
+    str = str.replace(/}/g, ')');
+    str = str.replace(/\[/g, '(');
+    str = str.replace(/\]/g, ')');
+    return str;
+  }
+
+  getExprIdxs(idx: number): number[] {
+    let stack = [];
+    let r = [0, 0];
+    while (this.inp[idx] != '(' && idx < this.inp.length) {
+      idx++;
+    }
+    r[0] = idx;
+    stack.push(this.inp[idx]);
+
+    while (stack.length > 0 && idx < this.inp.length) {
+      idx++;
+      let ch = this.inp[idx];
+      if (ch == '(') {
+        stack.push(ch);
+      } else if (ch == ')') {
+        stack.pop();
+      }
+    }
+    r[1] = idx;
+
+    return r;
+  }
+
+  onDegreeUnitChange() {
+
+  }
+
+
 }

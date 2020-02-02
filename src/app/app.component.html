@@ -31,6 +31,11 @@
           <button *ngIf="result" mat-icon-button matSuffix (click)="copy(result)">
             <mat-icon>file_copy</mat-icon>
           </button>
+          <mat-radio-group *ngIf="isTrigonometric" class="degree-radio" [(ngModel)]="degreeUnit" (change)="onDegreeUnitChange()">
+            <mat-radio-button *ngFor="let u of degreeUnits" [value]="u">
+              {{u}}
+            </mat-radio-button>
+          </mat-radio-group>
         </div>
       </div>
       <app-screen-keyboard [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)"></app-screen-keyboard>

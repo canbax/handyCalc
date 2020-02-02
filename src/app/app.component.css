@@ -8,6 +8,12 @@ mat-radio-group {
   margin: 15px 0;
 }
 
+.degree-radio{
+  display: flex;
+  flex-direction: row;
+  margin: 5px 0;
+}
+
 mat-radio-button {
   margin: 5px;
 }
