@@ -1,5 +1,5 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { Component, NgZone, ViewChild, AfterViewChecked, ElementRef } from '@angular/core';
+import { Component, NgZone, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
 import { take, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { evaluate } from 'mathjs'
@@ -12,7 +12,7 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewChecked {
+export class AppComponent implements AfterViewChecked, OnInit {
 
   result: string;
   mode: string;
@@ -32,9 +32,8 @@ export class AppComponent implements AfterViewChecked {
   private readonly INP_CHANGE_DEBOUNCE = 300;
 
   constructor(private _ngZone: NgZone, private _clipboardService: ClipboardService, private _snackBar: MatSnackBar) {
-    this.modes = ['standard'];
-    this.mode = this.modes[0];
-
+    this.modes = ['standard', 'extended', 'programmer'];
+    this.mode = this.modes[1];
     this.modelChanged.pipe(
       debounceTime(this.INP_CHANGE_DEBOUNCE),
       distinctUntilChanged())
@@ -46,8 +45,15 @@ export class AppComponent implements AfterViewChecked {
     this.isOpen = false;
   }
 
-  ngAfterViewChecked(): void {
+  ngOnInit() {
+    setTimeout(() => this.onModeChange(), 0);
+  }
 
+  onModeChange() {
+    this._screenKeyboard.setKeyboard(this.mode);
+  }
+
+  ngAfterViewChecked(): void {
   }
 
   private triggerResize() {

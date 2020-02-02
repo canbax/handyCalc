@@ -1,5 +1,6 @@
 import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { CalcBtn } from './CalcBtn';
+import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './keyboards';
 
 @Component({
   selector: 'app-screen-keyboard',
@@ -11,39 +12,27 @@ export class ScreenKeyboardComponent implements OnInit {
   @Output() screenKeyClicked = new EventEmitter<string>();
   @ViewChild('mainDiv', { static: false }) myDiv: ElementRef<HTMLElement>;
   tiles: CalcBtn[];
+  numCol: number = 5;
 
   constructor() {
-    this.tiles = [
-      { txt: 'sin', fn: (s) => { return s + 'sin(' }, ids: ['sin'] },
-      { txt: 'cos', fn: (s) => { return s + 'cos(' }, ids: ['cos'] },
-      { txt: 'tan', fn: (s) => { return s + 'tan(' }, ids: ['tan'] },
-      { txt: 'x<sup>n</sup>', fn: (s) => { return s + '^' }, ids: ['Dead'] },
-      { txt: '&#8730;x', fn: (s) => { return s + '^(0.5)' }, ids: ['square root'] },
-      { txt: '7', fn: (s) => { return s + '7' }, ids: ['7'] },
-      { txt: '8', fn: (s) => { return s + '8' }, ids: ['8'] },
-      { txt: '9', fn: (s) => { return s + '9' }, ids: ['9'] },
-      { txt: 'DEL', fn: (s) => { return s.slice(s.length - 1) }, ids: ['Delete', 'Backspace'] },
-      { txt: 'C', fn: (s) => { return '' }, ids: ['='] },
-      { txt: '4', fn: (s) => { return s + '4' }, ids: ['4'] },
-      { txt: '5', fn: (s) => { return s + '5' }, ids: ['5'] },
-      { txt: '6', fn: (s) => { return s + '6' }, ids: ['6'] },
-      { txt: 'x', fn: (s) => { return s + '*' }, ids: ['x'] },
-      { txt: '÷', fn: (s) => { return s + '÷' }, ids: ['/'] },
-      { txt: '1', fn: (s) => { return s + '1' }, ids: ['1'] },
-      { txt: '2', fn: (s) => { return s + '2' }, ids: ['2'] },
-      { txt: '3', fn: (s) => { return s + '3' }, ids: ['3'] },
-      { txt: '+', fn: (s) => { return s + '+' }, ids: ['+'] },
-      { txt: '-', fn: (s) => { return s + '-' }, ids: ['-'] },
-      { txt: '0', fn: (s) => { return s + '0' }, ids: ['0'] },
-      { txt: '.', fn: (s) => { return s + '.' }, ids: ['.'] },
-      { txt: '(', fn: (s) => { return s + '(' }, ids: ['('] },
-      { txt: ')', fn: (s) => { return s + ')' }, ids: [')'] },
-      { txt: '%', fn: (s) => { return s + '%' }, ids: ['%'] }
-    ];
+    this.tiles = STD_KEYBOARD;
   }
 
   ngOnInit() {
     
+  }
+
+  setKeyboard(mode: string) {
+    if (mode == 'standard') {
+      this.tiles = STD_KEYBOARD;
+      this.numCol = 5;
+    } else if (mode == 'extended') {
+      this.tiles = EXTENDED_KEYBOARD;
+      this.numCol = 6;
+    } else if (mode == 'programmer') {
+      this.tiles = PROGRAMMER_KEYBOARD;
+      this.numCol = 6;
+    }
   }
 
   tileClicked(k: CalcBtn) {

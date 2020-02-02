@@ -1,6 +1,6 @@
 <mat-sidenav-container>
   <mat-sidenav mode="side" #sidenav [(opened)]="isOpen">
-    <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="mode">
+    <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="mode" (change)="onModeChange()">
       <mat-radio-button *ngFor="let m of modes" [value]="m">
         {{m}}
       </mat-radio-button>

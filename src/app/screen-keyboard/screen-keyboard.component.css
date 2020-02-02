@@ -18,3 +18,7 @@ mat-grid-list {
 .container {
     border: 2px solid red;
 }
+
+div {
+  font-size: large;
+}

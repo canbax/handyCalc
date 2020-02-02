@@ -1,5 +1,5 @@
 <mat-card #mainDiv>
-  <mat-grid-list cols="5" rowHeight="fit">
+  <mat-grid-list [cols]="numCol" rowHeight="fit">
     <mat-grid-tile *ngFor="let t of tiles">
       <button mat-button (click)="tileClicked(t)" [ngClass]="{'down-btn': t.isPressed}">
         <div [innerHTML]="t.txt"></div>
