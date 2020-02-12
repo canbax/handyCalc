@@ -2,10 +2,11 @@ import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { Component, NgZone, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
 import { take, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { evaluate } from 'mathjs'
+import { evaluate, parse, parser } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
+import { TrigonometricFnArg } from './trigonometric-fn-arg';
 
 @Component({
   selector: 'app-root',
@@ -16,8 +17,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   result: string;
   mode: string;
-  degreeUnit: string = 'RAD';
-  degreeUnits: string[] = ['RAD', 'DEG', 'GRAD'];
+  degreeUnit: string = 'deg';
+  degreeUnits: string[] = ['deg', 'rad', 'grad'];
   isTrigonometric: boolean = false;
   modes: string[];
   inp: string = '';
@@ -50,6 +51,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   ngOnInit() {
     setTimeout(() => this.onModeChange(), 0);
+    window['parse'] = parse;
+    window['parser'] = parser;
+    window['evaluate'] = evaluate;
   }
 
   onModeChange() {
@@ -115,33 +119,37 @@ export class AppComponent implements AfterViewChecked, OnInit {
   }
 
   convert4AngleUnit() {
-    const fnList = ['sin', 'cos', 'tan'];
     let r = this.inp;
     this.isTrigonometric = false;
-    for (let i = 0; i < fnList.length; i++) {
-      let regexp = new RegExp(fnList[i], 'g');
-      let match: RegExpExecArray, matches = [];
-
-      while ((match = regexp.exec(r)) != null) {
-        matches.push(match.index + fnList[i].length);
-      }
-
-      if (matches.length > 0) {
-        this.isTrigonometric = true;
-      }
-
-      for (let j = 0; j < matches.length; j++) {
-        let arr = this.getExprIdxs(matches[j]);
-        console.log('first bracket: ', r[arr[0]], ' idx: ', arr[0],  ' sec bracket: ', r[arr[1]], ' idx: ', arr[1], );
-        if (arr[1] - arr[0] > 0) {
-          let s0 = r.slice(0, arr[0] + 1);
-          let s1 = r.slice(arr[0] + 1, arr[1]);
-          let s2 = r.slice(arr[1] + 1, r.length);
-          r = s0 + 'unit(' + s1 + `,'` + this.degreeUnit.toLowerCase() + `')` + s2;
-        }
-      }
+    let items = this.getTrigonometricFnArgs(r);
+    this.isTrigonometric = items.length > 0;
+    let orderedItems = this.sortTopological(items);
+    for (let i = orderedItems.length - 1; i > -1; i--) {
+      console.log('r: ', r);
+      let txtOrder = orderedItems[i].txtOrder;
+      let arg = r.slice(items[txtOrder].start + 1, items[txtOrder].end);
+      let s0 = r.slice(0, items[txtOrder].start + 1);
+      let s2 = r.slice(items[txtOrder].end, r.length);
+      r = s0 + '(' + arg + ') ' + this.degreeUnit + s2;
+      items = this.getTrigonometricFnArgs(r);
     }
+    console.log('r: ', r);
     return r;
+  }
+
+  private getTrigonometricFnArgs(str: string) {
+    let regexp = new RegExp('sin|cos|tan', 'g');
+    let match: RegExpExecArray, matches = [];
+    while ((match = regexp.exec(str)) != null) {
+      matches.push(match.index + 3);
+    }
+
+    let items: TrigonometricFnArg[] = [];
+    for (let i = 0; i < matches.length; i++) {
+      let [s, e] = this.getExprIdxs(str, matches[i]);
+      items.push({ start: s, end: e, isMarked: false, txtOrder: i, topologicalOrder: -1 });
+    }
+    return items;
   }
 
   convertBrackets(): string {
@@ -153,18 +161,18 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return str;
   }
 
-  getExprIdxs(idx: number): number[] {
+  getExprIdxs(str: string, idx: number): number[] {
     let stack = [];
     let r = [0, 0];
-    while (this.inp[idx] != '(' && idx < this.inp.length) {
+    while (str[idx] != '(' && idx < str.length) {
       idx++;
     }
     r[0] = idx;
-    stack.push(this.inp[idx]);
+    stack.push(str[idx]);
 
-    while (stack.length > 0 && idx < this.inp.length) {
+    while (stack.length > 0 && idx < str.length) {
       idx++;
-      let ch = this.inp[idx];
+      let ch = str[idx];
       if (ch == '(') {
         stack.push(ch);
       } else if (ch == ')') {
@@ -176,8 +184,48 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return r;
   }
 
-  onDegreeUnitChange() {
+  private sortTopological(items: TrigonometricFnArg[]): TrigonometricFnArg[] {
+    let stack: TrigonometricFnArg[] = [];
 
+    for (let i = 0; i < items.length; i++) {
+      let curr = items[i];
+      if (!curr.isMarked) {
+        this.sortTopologicalUtil(curr, stack, items)
+      }
+    }
+    console.log('topological order: ', stack);
+    return stack;
+  }
+
+  private sortTopologicalUtil(curr: TrigonometricFnArg, stack: TrigonometricFnArg[], items: TrigonometricFnArg[]) {
+    curr.isMarked = true;
+    let children = this.getChildrens(items, curr);
+    for (let i = 0; i < children.length; i++) {
+      if (!children[i].isMarked) {
+        this.sortTopologicalUtil(children[i], stack, items);
+      }
+    }
+    stack.push(curr);
+  }
+
+  private getChildrens(items: TrigonometricFnArg[], curr: TrigonometricFnArg): TrigonometricFnArg[] {
+    let r = [];
+    let s = curr.start;
+    let e = curr.end;
+
+    for (let i = 0; i < items.length; i++) {
+      if (i == curr.txtOrder) {
+        continue;
+      }
+      if (s < items[i].start && e < items[i].end) {
+        r.push(items[i]);
+      }
+    }
+    return r;
+  }
+
+  onDegreeUnitChange() {
+    this.compute();
   }
 
 
