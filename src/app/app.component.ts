@@ -16,6 +16,10 @@ import { TrigonometricFnArg } from './trigonometric-fn-arg';
 export class AppComponent implements AfterViewChecked, OnInit {
 
   result: string;
+  resultHex: string;
+  resultOct: string;
+  resultBin: string;
+
   mode: string;
   degreeUnit: string = 'deg';
   degreeUnits: string[] = ['deg', 'rad', 'grad'];
@@ -58,6 +62,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   onModeChange() {
     this._screenKeyboard.setKeyboard(this.mode);
+    this.calculateResultsOnOtherBases();
   }
 
   ngAfterViewChecked(): void {
@@ -82,6 +87,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
       if (t == 'function') {
         this.result = '';
       }
+      this.calculateResultsOnOtherBases();
     } catch (e) {
       console.log('e: ', e);
     }
@@ -90,6 +96,16 @@ export class AppComponent implements AfterViewChecked, OnInit {
   copy(txt: string) {
     this._clipboardService.copyFromContent(txt);
     this.showSnackbar(`'${txt}' copied!`);
+  }
+  
+  private calculateResultsOnOtherBases() {
+    if (this.mode != 'programmer' || this.result == undefined || this.result.length < 1) {
+      return;
+    }
+    let n = Number(this.result);
+    this.resultHex = n.toString(16);
+    this.resultOct = n.toString(8);
+    this.resultBin = n.toString(2);
   }
 
   private showSnackbar(txt: string) {

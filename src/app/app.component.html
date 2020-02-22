@@ -27,11 +27,36 @@
           </button>
         </mat-form-field>
         <div>
-          <span class="result-txt">{{result}}</span>
-          <button *ngIf="result" mat-icon-button matSuffix (click)="copy(result)">
-            <mat-icon>file_copy</mat-icon>
-          </button>
-          <mat-radio-group *ngIf="isTrigonometric" class="degree-radio" [(ngModel)]="degreeUnit" (change)="onDegreeUnitChange()">
+          <div *ngIf="mode == 'programmer'">
+            <span class="result-base">HEX&nbsp;</span>
+            <span class="result-txt">{{resultHex}}</span>
+            <button *ngIf="resultHex" mat-icon-button matSuffix (click)="copy(resultHex)">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </div>
+          <div>
+            <span class="result-base" *ngIf="mode == 'programmer'">DEC&nbsp;&nbsp;</span>
+            <span class="result-txt">{{result}}</span>
+            <button *ngIf="result" mat-icon-button matSuffix (click)="copy(result)">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </div>
+          <div *ngIf="mode == 'programmer'">
+            <span class="result-base">OCT&nbsp;&nbsp;</span>
+            <span class="result-txt">{{resultOct}}</span>
+            <button *ngIf="resultOct" mat-icon-button matSuffix (click)="copy(resultOct)">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </div>
+          <div *ngIf="mode == 'programmer'">
+            <span class="result-base">BIN&nbsp;&nbsp;</span>
+            <span class="result-txt">{{resultBin}}</span>
+            <button *ngIf="resultBin" mat-icon-button matSuffix (click)="copy(resultBin)">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </div>
+          <mat-radio-group *ngIf="isTrigonometric" class="degree-radio" [(ngModel)]="degreeUnit"
+            (change)="onDegreeUnitChange()">
             <mat-radio-button *ngFor="let u of degreeUnits" [value]="u">
               {{u}}
             </mat-radio-button>

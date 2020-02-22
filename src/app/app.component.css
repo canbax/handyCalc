@@ -47,6 +47,10 @@ app-screen-keyboard {
   align-items: baseline;
 }
 
+.result-base {
+  font-size: small;
+}
+
 .result-panel {
   size: 3;
 }
