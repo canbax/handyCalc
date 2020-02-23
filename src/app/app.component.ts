@@ -1,7 +1,7 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { Component, NgZone, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
 import { take, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, from } from 'rxjs';
 import { evaluate, parse, parser } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -15,14 +15,13 @@ import { TrigonometricFnArg } from './trigonometric-fn-arg';
 })
 export class AppComponent implements AfterViewChecked, OnInit {
 
-  result: string;
-  resultHex: string;
-  resultOct: string;
-  resultBin: string;
-
+  // results for 4 bases
+  results: string[] = ['', '', '', ''];
   mode: string;
   degreeUnit: string = 'deg';
   degreeUnits: string[] = ['deg', 'rad', 'grad'];
+  bases: string[] = [];
+  base: string = 'DEC';
   isTrigonometric: boolean = false;
   modes: string[];
   inp: string = '';
@@ -35,6 +34,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
   private _screenKeyboard: ScreenKeyboardComponent;
   @ViewChild('userInp', { static: false })
   private _userInp: ElementRef;
+  private hex2dec = {
+    '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+    'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14, 'f': 15, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15
+  };
 
   private readonly KEY_UP_DEBOUNCE = 510;
   private readonly INP_CHANGE_DEBOUNCE = 300;
@@ -63,6 +66,11 @@ export class AppComponent implements AfterViewChecked, OnInit {
   onModeChange() {
     this._screenKeyboard.setKeyboard(this.mode);
     this.calculateResultsOnOtherBases();
+    if (this.mode == 'programmer') {
+      this.bases = ['HEX', 'DEC', 'OCT', 'BIN'];
+    } else {
+      this.bases = [];
+    }
   }
 
   ngAfterViewChecked(): void {
@@ -82,13 +90,17 @@ export class AppComponent implements AfterViewChecked, OnInit {
     try {
       let str = this.convertBrackets();
       str = this.convert4AngleUnit();
-      this.result = evaluate(str);
-      const t = typeof this.result;
-      if (t == 'function') {
-        this.result = '';
+      str = this.convert2theBase(str);
+      this.results[1] = evaluate(str);
+      const t = typeof this.results[1];
+      if (t == 'function' || t == 'undefined') {
+        this.results[1] = '';
+      } else {
+        this.results[1] = this.results[1] + '';
       }
       this.calculateResultsOnOtherBases();
     } catch (e) {
+      this.results = ['', '', '', ''];
       console.log('e: ', e);
     }
   }
@@ -97,15 +109,16 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this._clipboardService.copyFromContent(txt);
     this.showSnackbar(`'${txt}' copied!`);
   }
-  
+
   private calculateResultsOnOtherBases() {
-    if (this.mode != 'programmer' || this.result == undefined || this.result.length < 1) {
+    if (this.mode != 'programmer' || this.results[1] == undefined || this.results[1].length < 1) {
+      this.results = ['', '', '', ''];
       return;
     }
-    let n = Number(this.result);
-    this.resultHex = n.toString(16);
-    this.resultOct = n.toString(8);
-    this.resultBin = n.toString(2);
+    let n = Number(this.results[1]);
+    this.results[0] = n.toString(16);
+    this.results[2] = n.toString(8);
+    this.results[3] = n.toString(2);
   }
 
   private showSnackbar(txt: string) {
@@ -141,7 +154,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.isTrigonometric = items.length > 0;
     let orderedItems = this.sortTopological(items);
     for (let i = orderedItems.length - 1; i > -1; i--) {
-      console.log('r: ', r);
       let txtOrder = orderedItems[i].txtOrder;
       let arg = r.slice(items[txtOrder].start + 1, items[txtOrder].end);
       let s0 = r.slice(0, items[txtOrder].start + 1);
@@ -244,5 +256,53 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.compute();
   }
 
+  convert2theBase(s: string) {
+    if (this.mode != 'programmer') {
+      return s;
+    }
+    let idx = 0;
+    let regexp = new RegExp('(?![g-zG-Z]+)[0123456789ABCDEFabcdef]+');
+    let m: RegExpExecArray;
+
+    while ((m = regexp.exec(s.substring(idx))) != null) {
+      let matchIdx = idx + m.index;
+      let s1 = s.substr(0, matchIdx);
+      let s2 = s.substr(matchIdx + m[0].length, s.length);
+      let b = 10;
+      if (this.base == 'HEX') {
+        b = 16;
+      }
+      if (this.base == 'OCT') {
+        b = 8;
+      }
+      if (this.base == 'BIN') {
+        b = 2;
+      }
+      let s0 = s.substr(matchIdx, m[0].length);
+      let r = this.convert2dec(s0, b);
+      idx = s1.length + r.length;
+      s = s1 + '' + r + s2;
+    }
+
+    return s;
+  }
+
+  onBaseChange(b: string) {
+    // this.base = b;
+    this.compute();
+  }
+
+  private convert2dec(s: string, fromBase: number): string {
+    if (fromBase == 10) {
+      return s;
+    }
+    let n = 0;
+    let pow = 0;
+    for (let i = s.length - 1; i > -1; i--) {
+      n += this.hex2dec[s[i]] * Math.pow(fromBase, pow);
+      pow += 1;
+    }
+    return n + '';
+  }
 
 }
