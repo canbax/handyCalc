@@ -12,6 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
+import { MatListModule } from '@angular/material/list';
 
 import { AppComponent } from './app.component';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -33,7 +34,8 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
     MatDividerModule,
     ClipboardModule,
     MatSnackBarModule,
-    MatCardModule
+    MatCardModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent]

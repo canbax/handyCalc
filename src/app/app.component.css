@@ -30,10 +30,6 @@ mat-radio-button {
   height: 10vh;
 }
 
-.input-result {
-  height: 30vh;
-}
-
 app-screen-keyboard {
   height: 60vh;
 }

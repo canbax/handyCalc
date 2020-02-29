@@ -14,10 +14,10 @@
       <span class="header-txt">
         <a href="https://github.com/canbax/handyCalc" target="_blank"> Handy Calculator (0.0 beta)</a>
       </span>
-
     </div>
+
     <div class="container">
-      <div class="input-result">
+      <div>
         <mat-form-field [style.fontSize]="16" class="editor">
           <textarea #userInp (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput
             cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" [ngModel]='inp'
@@ -27,17 +27,23 @@
           </button>
         </mat-form-field>
         <div>
-
-          <mat-radio-group [(ngModel)]="base" (change)="onBaseChange()">
-            <mat-radio-button *ngFor="let b of bases; let i = index" [value]="b">
-              <span class="result-base"> {{b}} &nbsp;&nbsp;</span>
-              <span class="result-txt">{{results[i]}}</span>
-              <button *ngIf="results[i].length > 0" mat-icon-button matSuffix (click)="copy(results[i])">
-                <mat-icon>file_copy</mat-icon>
-              </button>
-            </mat-radio-button>
-          </mat-radio-group>
-
+          <div *ngIf="mode == 'programmer'">
+            <mat-radio-group [(ngModel)]="base" (change)="onBaseChange()">
+              <mat-radio-button *ngFor="let b of bases; let i = index" [value]="b">
+                <span class="result-base"> {{b}} &nbsp;&nbsp;</span>
+                <span class="result-txt">{{results[i]}}</span>
+                <button *ngIf="results[i].length > 0" mat-icon-button matSuffix (click)="copy(results[i])">
+                  <mat-icon>file_copy</mat-icon>
+                </button>
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
+          <div *ngIf="mode != 'programmer'">
+            <span class="result-txt">{{results[1]}}</span>
+            <button *ngIf="results[1].length > 0" mat-icon-button matSuffix (click)="copy(results[1])">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+          </div>
           <mat-radio-group *ngIf="isTrigonometric" class="degree-radio" [(ngModel)]="degreeUnit"
             (change)="onDegreeUnitChange()">
             <mat-radio-button *ngFor="let u of degreeUnits" [value]="u">
@@ -46,7 +52,8 @@
           </mat-radio-group>
         </div>
       </div>
-      <app-screen-keyboard [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)"></app-screen-keyboard>
     </div>
+    <app-screen-keyboard [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)"></app-screen-keyboard>
+
   </mat-sidenav-content>
 </mat-sidenav-container>

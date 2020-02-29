@@ -7,6 +7,7 @@ import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
 import { TrigonometricFnArg } from './trigonometric-fn-arg';
+import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-keyboard/keyboards';
 
 @Component({
   selector: 'app-root',
@@ -38,7 +39,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
     '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
     'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14, 'f': 15, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15
   };
-
+  private keyboardOps: string[] = [];
   private readonly KEY_UP_DEBOUNCE = 510;
   private readonly INP_CHANGE_DEBOUNCE = 300;
 
@@ -61,6 +62,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
     window['parse'] = parse;
     window['parser'] = parser;
     window['evaluate'] = evaluate;
+    this.keyboardOps = STD_KEYBOARD.filter(x => x.isOp).map(x => x.fn(''));
+    this.keyboardOps.push(...EXTENDED_KEYBOARD.filter(x => x.isOp).map(x => x.fn('')));
+    this.keyboardOps.push(...PROGRAMMER_KEYBOARD.filter(x => x.isOp).map(x => x.fn('')));
+    this.keyboardOps = this.keyboardOps.map(x => x.substring(0, x.length - 1));
   }
 
   onModeChange() {
@@ -90,7 +95,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
     try {
       let str = this.convertBrackets();
       str = this.convert4AngleUnit();
-      str = this.convert2theBase(str);
+      str = this.convertBase2Dec(str);
       this.results[1] = evaluate(str);
       const t = typeof this.results[1];
       if (t == 'function' || t == 'undefined') {
@@ -111,7 +116,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
   }
 
   private calculateResultsOnOtherBases() {
-    if (this.mode != 'programmer' || this.results[1] == undefined || this.results[1].length < 1) {
+    if (this.mode != 'programmer') {
+      return;
+    }
+    if (this.results[1] == undefined || this.results[1].length < 1) {
       this.results = ['', '', '', ''];
       return;
     }
@@ -161,7 +169,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
       r = s0 + '(' + arg + ') ' + this.degreeUnit + s2;
       items = this.getTrigonometricFnArgs(r);
     }
-    console.log('r: ', r);
     return r;
   }
 
@@ -221,7 +228,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
         this.sortTopologicalUtil(curr, stack, items)
       }
     }
-    console.log('topological order: ', stack);
     return stack;
   }
 
@@ -256,15 +262,19 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.compute();
   }
 
-  convert2theBase(s: string) {
+  // math.js works with decimals
+  convertBase2Dec(s: string) {
     if (this.mode != 'programmer') {
       return s;
     }
     let idx = 0;
-    let regexp = new RegExp('(?![g-zG-Z]+)[0123456789ABCDEFabcdef]+');
+    let regexp = new RegExp('[0123456789ABCDEFabcdef]+');
     let m: RegExpExecArray;
-
     while ((m = regexp.exec(s.substring(idx))) != null) {
+      if (this.isInOperators(s, m.index + idx)) {
+        idx = idx + m[0].length;
+        continue;
+      }
       let matchIdx = idx + m.index;
       let s1 = s.substr(0, matchIdx);
       let s2 = s.substr(matchIdx + m[0].length, s.length);
@@ -282,8 +292,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
       let r = this.convert2dec(s0, b);
       idx = s1.length + r.length;
       s = s1 + '' + r + s2;
+      console.log('converted :', s0, ' to ', r);
     }
-
     return s;
   }
 
@@ -303,6 +313,37 @@ export class AppComponent implements AfterViewChecked, OnInit {
       pow += 1;
     }
     return n + '';
+  }
+
+  private convertFromDec(s: string, toBase: number): string {
+    if (toBase == 10) {
+      return s;
+    }
+    let n = 0;
+    let pow = 0;
+    for (let i = s.length - 1; i > -1; i--) {
+      n += this.hex2dec[s[i]] * Math.pow(toBase, pow);
+      pow += 1;
+    }
+    return n + '';
+  }
+
+  private isInOperators(s: string, i: number): boolean {
+
+    let regexp = new RegExp(this.keyboardOps.join('|'), 'gi');
+    let match: RegExpExecArray, matches: RegExpExecArray[] = [];
+    while ((match = regexp.exec(s)) != null) {
+      matches.push(match);
+    }
+
+    let isIn = false;
+    for (let m of matches) {
+
+      if (i >= m.index && i <= (m.index + m[0].length)) {
+        return true;
+      }
+    }
+    return isIn;
   }
 
 }

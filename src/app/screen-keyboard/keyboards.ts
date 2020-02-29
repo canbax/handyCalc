@@ -1,9 +1,9 @@
 import { CalcBtn } from './CalcBtn';
 
 export const STD_KEYBOARD: CalcBtn[] = [
-  { txt: 'sin', fn: (s) => { return s + 'sin(' }, ids: ['sin'] },
-  { txt: 'cos', fn: (s) => { return s + 'cos(' }, ids: ['cos'] },
-  { txt: 'tan', fn: (s) => { return s + 'tan(' }, ids: ['tan'] },
+  { txt: 'sin', fn: (s) => { return s + 'sin(' }, ids: ['sin'], isOp: true },
+  { txt: 'cos', fn: (s) => { return s + 'cos(' }, ids: ['cos'], isOp: true },
+  { txt: 'tan', fn: (s) => { return s + 'tan(' }, ids: ['tan'], isOp: true },
   { txt: 'x<sup>n</sup>', fn: (s) => { return s + '^' }, ids: ['Dead'] },
   { txt: '&#8730;x', fn: (s) => { return s + '^(0.5)' }, ids: ['square root'] },
   { txt: '7', fn: (s) => { return s + '7' }, ids: ['7'] },
@@ -29,19 +29,19 @@ export const STD_KEYBOARD: CalcBtn[] = [
 ];
 
 export const EXTENDED_KEYBOARD: CalcBtn[] = [
-  { txt: 'sin', fn: (s) => { return s + 'sin(' }, ids: ['sin'] },
-  { txt: 'cos', fn: (s) => { return s + 'cos(' }, ids: ['cos'] },
-  { txt: 'tan', fn: (s) => { return s + 'tan(' }, ids: ['tan'] },
-  { txt: 'asin', fn: (s) => { return s + 'asin(' }, ids: ['asin'] },
-  { txt: 'acos', fn: (s) => { return s + 'acos(' }, ids: ['acos'] },
-  { txt: 'atan', fn: (s) => { return s + 'atan(' }, ids: ['atan'] },
+  { txt: 'sin', fn: (s) => { return s + 'sin(' }, ids: ['sin'], isOp: true },
+  { txt: 'cos', fn: (s) => { return s + 'cos(' }, ids: ['cos'], isOp: true },
+  { txt: 'tan', fn: (s) => { return s + 'tan(' }, ids: ['tan'], isOp: true },
+  { txt: 'asin', fn: (s) => { return s + 'asin(' }, ids: ['asin'], isOp: true },
+  { txt: 'acos', fn: (s) => { return s + 'acos(' }, ids: ['acos'], isOp: true },
+  { txt: 'atan', fn: (s) => { return s + 'atan(' }, ids: ['atan'], isOp: true },
 
-  { txt: 'sinh', fn: (s) => { return s + 'sinh(' }, ids: ['sinh'] },
-  { txt: 'cosh', fn: (s) => { return s + 'cosh(' }, ids: ['cosh'] },
-  { txt: 'tanh', fn: (s) => { return s + 'tanh(' }, ids: ['tanh'] },
-  { txt: 'log', fn: (s) => { return s + 'log(' }, ids: ['log'] },
-  { txt: 'log2', fn: (s) => { return s + 'log2(' }, ids: ['log2'] },
-  { txt: 'log10', fn: (s) => { return s + 'log10(' }, ids: ['log10'] },
+  { txt: 'sinh', fn: (s) => { return s + 'sinh(' }, ids: ['sinh'], isOp: true },
+  { txt: 'cosh', fn: (s) => { return s + 'cosh(' }, ids: ['cosh'], isOp: true },
+  { txt: 'tanh', fn: (s) => { return s + 'tanh(' }, ids: ['tanh'], isOp: true },
+  { txt: 'log', fn: (s) => { return s + 'log(' }, ids: ['log'], isOp: true },
+  { txt: 'log2', fn: (s) => { return s + 'log2(' }, ids: ['log2'], isOp: true },
+  { txt: 'log10', fn: (s) => { return s + 'log10(' }, ids: ['log10'], isOp: true },
 
   { txt: 'DEL', fn: (s) => { return s.substring(0, s.length - 1) }, ids: ['Delete', 'Backspace'] },
   { txt: '7', fn: (s) => { return s + '7' }, ids: ['7'] },
@@ -67,23 +67,23 @@ export const EXTENDED_KEYBOARD: CalcBtn[] = [
   { txt: ')', fn: (s) => { return s + ')' }, ids: [')'] },
   { txt: '0', fn: (s) => { return s + '0' }, ids: ['0'] },
   { txt: '.', fn: (s) => { return s + '.' }, ids: ['.'] },
-  { txt: '!', fn: (s) => { return s + 'factorial(' }, ids: ['!'] },
+  { txt: '!', fn: (s) => { return s + 'factorial(' }, ids: ['!'], isOp: true },
 ];
 
 export const PROGRAMMER_KEYBOARD: CalcBtn[] = [
-  { txt: 'and', fn: (s) => { return s + 'bitAnd(' }, ids: ['and'] },
+  { txt: 'and', fn: (s) => { return s + 'bitAnd(' }, ids: ['and'], isOp: true },
   { txt: 'D', fn: (s) => { return s + 'D' }, ids: ['D'] },
   { txt: 'E', fn: (s) => { return s + 'E' }, ids: ['E'] },
   { txt: 'F', fn: (s) => { return s + 'F' }, ids: ['F'] },
-  { txt: 'not', fn: (s) => { return s + 'bitNot(' }, ids: ['bitNot'] },
-  { txt: 'xor', fn: (s) => { return s + 'bitXor(' }, ids: ['xor'] },
+  { txt: 'not', fn: (s) => { return s + 'bitNot(' }, ids: ['bitNot'], isOp: true },
+  { txt: 'xor', fn: (s) => { return s + 'bitXor(' }, ids: ['xor'], isOp: true },
 
-  { txt: 'or', fn: (s) => { return s + 'bitOr(' }, ids: ['or'] },
+  { txt: 'or', fn: (s) => { return s + 'bitOr(' }, ids: ['or'], isOp: true },
   { txt: 'A', fn: (s) => { return s + 'A' }, ids: ['A'] },
   { txt: 'B', fn: (s) => { return s + 'B' }, ids: ['B'] },
   { txt: 'C', fn: (s) => { return s + 'C' }, ids: ['C'] },
-  { txt: 'log2', fn: (s) => { return s + 'log2(' }, ids: ['log2'] },
-  { txt: 'log10', fn: (s) => { return s + 'log10(' }, ids: ['log10'] },
+  { txt: 'log2', fn: (s) => { return s + 'log2(' }, ids: ['log2'], isOp: true },
+  { txt: 'log10', fn: (s) => { return s + 'log10(' }, ids: ['log10'], isOp: true },
 
   { txt: 'DEL', fn: (s) => { return s.substring(0, s.length - 1) }, ids: ['Delete', 'Backspace'] },
   { txt: '7', fn: (s) => { return s + '7' }, ids: ['7'] },
