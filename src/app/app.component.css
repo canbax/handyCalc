@@ -50,3 +50,7 @@ app-screen-keyboard {
 .result-panel {
   size: 3;
 }
+
+.m-5 {
+  margin: 5px;
+}

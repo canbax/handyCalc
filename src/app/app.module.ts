@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,7 +12,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
-import { MatListModule } from '@angular/material/list';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { AppComponent } from './app.component';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -27,6 +27,7 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
     MatInputModule,
     MatRadioModule,
     FormsModule,
+    ReactiveFormsModule,
     MatSidenavModule,
     MatButtonModule,
     MatIconModule,
@@ -35,7 +36,7 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
     ClipboardModule,
     MatSnackBarModule,
     MatCardModule,
-    MatListModule
+    MatAutocompleteModule
   ],
   providers: [],
   bootstrap: [AppComponent]

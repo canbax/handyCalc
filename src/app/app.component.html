@@ -5,6 +5,20 @@
         {{m}}
       </mat-radio-button>
     </mat-radio-group>
+
+    <form [formGroup]="fnListForm" class="m-5">
+      <mat-form-field>
+        <input type="text" matInput placeholder="Functions" formControlName="fnGroup" required
+          [matAutocomplete]="autoGroup">
+        <mat-autocomplete #autoGroup="matAutocomplete" (optionSelected)="fnSelected($event)">
+          <mat-optgroup *ngFor="let group of fnGroupOptions | async" [label]="group.title">
+            <mat-option *ngFor="let name of group.fnList" [value]="name">
+              {{name}}
+            </mat-option>
+          </mat-optgroup>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="header">

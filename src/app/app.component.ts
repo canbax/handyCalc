@@ -8,6 +8,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
 import { TrigonometricFnArg } from './trigonometric-fn-arg';
 import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-keyboard/keyboards';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { Observable } from 'rxjs';
+import { startWith, map } from 'rxjs/operators';
+import { MathFnGroup, _filter, fnGroups } from './math-fn';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+
+
 
 @Component({
   selector: 'app-root',
@@ -15,6 +22,11 @@ import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-k
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements AfterViewChecked, OnInit {
+
+  fnListForm: FormGroup = this._formBuilder.group({
+    fnGroup: '',
+  });
+  fnGroupOptions: Observable<MathFnGroup[]>;
 
   // results for 4 bases
   results: string[] = ['', '', '', ''];
@@ -42,8 +54,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
   private keyboardOps: string[] = [];
   private readonly KEY_UP_DEBOUNCE = 510;
   private readonly INP_CHANGE_DEBOUNCE = 300;
+  suggestions = [];
 
-  constructor(private _ngZone: NgZone, private _clipboardService: ClipboardService, private _snackBar: MatSnackBar) {
+  constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
     this.mode = this.modes[1];
     this.modelChanged.pipe(
@@ -59,13 +72,36 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   ngOnInit() {
     setTimeout(() => this.onModeChange(), 0);
-    window['parse'] = parse;
-    window['parser'] = parser;
-    window['evaluate'] = evaluate;
     this.keyboardOps = STD_KEYBOARD.filter(x => x.isOp).map(x => x.fn(''));
     this.keyboardOps.push(...EXTENDED_KEYBOARD.filter(x => x.isOp).map(x => x.fn('')));
     this.keyboardOps.push(...PROGRAMMER_KEYBOARD.filter(x => x.isOp).map(x => x.fn('')));
     this.keyboardOps = this.keyboardOps.map(x => x.substring(0, x.length - 1));
+
+    this.suggestions = STD_KEYBOARD.map(x => x.fn(''));
+    this.suggestions.push(...EXTENDED_KEYBOARD.map(x => x.fn('')));
+    this.suggestions.push(...PROGRAMMER_KEYBOARD.map(x => x.fn('')));
+
+    this.fnGroupOptions = this.fnListForm.get('fnGroup')!.valueChanges
+      .pipe(
+        startWith(''),
+        map(value => this._filterGroup(value))
+      );
+  }
+
+  private _filterGroup(value: string): MathFnGroup[] {
+    if (value) {
+      return fnGroups
+        .map(group => ({ title: group.title, fnList: _filter(group.fnList, value) }))
+        .filter(group => group.fnList.length > 0);
+    }
+    return fnGroups;
+  }
+
+  fnSelected(e: MatAutocompleteSelectedEvent) {
+    console.log('fnSelected: ', e);
+    let s = e.option.value as string;
+    s = s.substr(0, s.indexOf('(') + 1); 
+    this.inp = this.inp + s;
   }
 
   onModeChange() {
@@ -79,12 +115,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
   }
 
   ngAfterViewChecked(): void {
-  }
-
-  private triggerResize() {
-    // Wait for changes to be applied, then trigger textarea resize.
-    this._ngZone.onStable.pipe(take(1))
-      .subscribe(() => this.autosize.resizeToFitContent(true));
   }
 
   changed(text: string) {
@@ -219,6 +249,15 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return r;
   }
 
+  onDegreeUnitChange() {
+    this.compute();
+  }
+
+  onBaseChange(b: string) {
+    // this.base = b;
+    this.compute();
+  }
+
   private sortTopological(items: TrigonometricFnArg[]): TrigonometricFnArg[] {
     let stack: TrigonometricFnArg[] = [];
 
@@ -258,12 +297,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return r;
   }
 
-  onDegreeUnitChange() {
-    this.compute();
-  }
-
   // math.js works with decimals
-  convertBase2Dec(s: string) {
+  private convertBase2Dec(s: string) {
     if (this.mode != 'programmer') {
       return s;
     }
@@ -297,11 +332,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return s;
   }
 
-  onBaseChange(b: string) {
-    // this.base = b;
-    this.compute();
-  }
-
   private convert2dec(s: string, fromBase: number): string {
     if (fromBase == 10) {
       return s;
@@ -310,19 +340,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
     let pow = 0;
     for (let i = s.length - 1; i > -1; i--) {
       n += this.hex2dec[s[i]] * Math.pow(fromBase, pow);
-      pow += 1;
-    }
-    return n + '';
-  }
-
-  private convertFromDec(s: string, toBase: number): string {
-    if (toBase == 10) {
-      return s;
-    }
-    let n = 0;
-    let pow = 0;
-    for (let i = s.length - 1; i > -1; i--) {
-      n += this.hex2dec[s[i]] * Math.pow(toBase, pow);
       pow += 1;
     }
     return n + '';
@@ -344,6 +361,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
       }
     }
     return isIn;
+  }
+
+  private setSuggestions() {
+    // this.suggestions.filter(x => this.inp.toLowerCase().startsWith())
   }
 
 }
