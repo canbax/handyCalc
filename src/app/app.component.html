@@ -61,7 +61,7 @@
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="header">
-      <button mat-icon-button (click)="sidenav.toggle()" aria-label="Example icon-button with a heart icon">
+      <button mat-icon-button (click)="sidenav.toggle()">
         <mat-icon>menu</mat-icon>
       </button>
       <span class="header-txt">
@@ -78,7 +78,11 @@
           <button mat-icon-button matSuffix (click)="copy(inp)">
             <mat-icon>file_copy</mat-icon>
           </button>
+          <button mat-icon-button matSuffix (click)="isShowHistory=!isShowHistory;">
+            <mat-icon>history</mat-icon>
+          </button>
         </mat-form-field>
+
         <div>
           <div *ngIf="mode == 'programmer'">
             <mat-radio-group [(ngModel)]="base" (change)="compute()">
@@ -105,7 +109,18 @@
         </div>
       </div>
     </div>
-    <app-screen-keyboard [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)"></app-screen-keyboard>
+    <mat-card class="m-5" *ngIf="isShowHistory">
+      <mat-action-list>
+        <div mat-list-item *ngFor="let o of computeHistory; let i = index">
+          <button mat-raised-button class="wide-btn" (click)="loadFromHistory(o)"> {{o}}
+          </button>
+          <button mat-icon-button (click)="deleteFromHistory(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </mat-action-list>
+    </mat-card>
+    <app-screen-keyboard class="m-5" [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)"> </app-screen-keyboard>
 
   </mat-sidenav-content>
 </mat-sidenav-container>

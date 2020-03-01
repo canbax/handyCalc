@@ -52,6 +52,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
   private keyboardOps: string[] = [];
   private readonly KEY_UP_DEBOUNCE = 510;
   private readonly INP_CHANGE_DEBOUNCE = 300;
+  private readonly PUSH_HISTORY_MS = 1000;
+  private readonly HISTORY_STACK_SIZE = 33;
   suggestions = [];
   fnExpo = '';
   link2fn = '';
@@ -59,6 +61,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
   numDigit4Results = 6;
   isIgnoreComma = true;
   floatingPointMarker = '.';
+  isShowHistory = false;
+  computeHistory: string[] = [];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
@@ -90,6 +94,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
         startWith(''),
         map(value => this._filterGroup(value))
       );
+
+    setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
@@ -140,7 +146,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
       } else if (t == 'number' && !Number.isInteger(this.results[1])) {
         this.results[1] = this.results[1].toFixed(this.selectedFloatingPointPrecision);
       }
-      this.results[1] = (this.results[1] + '').substr(0, this.numDigit4Results);;
+      this.results[1] = (this.results[1] + '').substr(0, this.numDigit4Results);
       this.calculateResultsOnOtherBases();
     } catch (e) {
       this.results = ['', '', '', ''];
@@ -171,6 +177,28 @@ export class AppComponent implements AfterViewChecked, OnInit {
       return;
     }
     this._screenKeyboard.simulateKeyPress(false, e.key);
+  }
+
+  loadFromHistory(o: string) {
+    this.inp = o;
+    this.compute();
+  }
+
+  keepHistory() {
+    const s = this.computeHistory.length;
+    if (this.computeHistory.findIndex(x => x == this.inp) > -1) {
+      return;
+    }
+    if (this.results[1].length > 0) {
+      this.computeHistory.push(this.inp);
+    }
+    if (s > this.HISTORY_STACK_SIZE) {
+      this.computeHistory.pop();
+    }
+  }
+
+  deleteFromHistory(i: number) {
+    this.computeHistory.splice(i, 1);
   }
 
   private _filterGroup(value: string): MathFnGroup[] {

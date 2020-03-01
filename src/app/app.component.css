@@ -58,3 +58,7 @@ app-screen-keyboard {
 mat-sidenav {
   max-width: 50vw;
 }
+
+.wide-btn {
+  width: 33vw;
+}
