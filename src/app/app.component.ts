@@ -92,15 +92,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
       );
   }
 
-  private _filterGroup(value: string): MathFnGroup[] {
-    if (value) {
-      return fnGroups
-        .map(group => ({ title: group.title, fnList: _filter(group.fnList, value) }))
-        .filter(group => group.fnList.length > 0);
-    }
-    return fnGroups;
-  }
-
   fnSelected(e: MatAutocompleteSelectedEvent) {
     let s = e.option.value as string;
     this.link2fn = 'https://mathjs.org/docs/reference/functions/' + s.substr(0, s.indexOf('(')) + '.html'
@@ -160,26 +151,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.showSnackbar(`'${txt}' copied!`);
   }
 
-  private calculateResultsOnOtherBases() {
-    if (this.mode != 'programmer') {
-      return;
-    }
-    if (this.results[1] == undefined || this.results[1].length < 1) {
-      this.results = ['', '', '', ''];
-      return;
-    }
-    let n = Number(this.results[1]);
-    this.results[0] = n.toString(16).substr(0, this.numDigit4Results);
-    this.results[2] = n.toString(8).substr(0, this.numDigit4Results);
-    this.results[3] = n.toString(2).substr(0, this.numDigit4Results);
-  }
-
-  private showSnackbar(txt: string) {
-    this._snackBar.open(txt, 'OK', {
-      duration: 2000
-    });
-  }
-
   onScreenKeyClicked(txt: string) {
     this.modelChanged.next(txt);
     this._userInp.nativeElement.focus();
@@ -200,7 +171,36 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this._screenKeyboard.simulateKeyPress(false, e.key);
   }
 
-  convert4AngleUnit() {
+  private _filterGroup(value: string): MathFnGroup[] {
+    if (value) {
+      return fnGroups
+        .map(group => ({ title: group.title, fnList: _filter(group.fnList, value) }))
+        .filter(group => group.fnList.length > 0);
+    }
+    return fnGroups;
+  }
+
+  private calculateResultsOnOtherBases() {
+    if (this.mode != 'programmer') {
+      return;
+    }
+    if (this.results[1] == undefined || this.results[1].length < 1) {
+      this.results = ['', '', '', ''];
+      return;
+    }
+    let n = Number(this.results[1]);
+    this.results[0] = n.toString(16).substr(0, this.numDigit4Results);
+    this.results[2] = n.toString(8).substr(0, this.numDigit4Results);
+    this.results[3] = n.toString(2).substr(0, this.numDigit4Results);
+  }
+
+  private showSnackbar(txt: string) {
+    this._snackBar.open(txt, 'OK', {
+      duration: 2000
+    });
+  }
+
+  private convert4AngleUnit() {
     let r = this.inp;
     this.isTrigonometric = false;
     let items = this.getTrigonometricFnArgs(r);
@@ -232,7 +232,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return items;
   }
 
-  convertBrackets(): string {
+  private convertBrackets(): string {
     let str = this.inp;
     str = str.replace(/{/g, '(');
     str = str.replace(/}/g, ')');
@@ -241,7 +241,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return str;
   }
 
-  getExprIdxs(str: string, idx: number): number[] {
+  private getExprIdxs(str: string, idx: number): number[] {
     let stack = [];
     let r = [0, 0];
     while (str[idx] != '(' && idx < str.length) {
@@ -263,7 +263,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
     return r;
   }
-  
+
   private sortTopological(items: TrigonometricFnArg[]): TrigonometricFnArg[] {
     let stack: TrigonometricFnArg[] = [];
 
@@ -368,8 +368,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return isIn;
   }
 
-  private setSuggestions() {
-    // this.suggestions.filter(x => this.inp.toLowerCase().startsWith())
-  }
+
 
 }
