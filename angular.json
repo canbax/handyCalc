@@ -124,5 +124,8 @@
       }
     }
   },
-  "defaultProject": "handyCalc"
+  "defaultProject": "handyCalc",
+  "cli": {
+    "analytics": "be52f3a5-601b-4520-87da-b01b2b0f3ec9"
+  }
 }
