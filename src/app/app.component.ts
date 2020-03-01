@@ -127,7 +127,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
     try {
       let str = this.convertBrackets();
       str = this.convert4AngleUnit();
-      if (this.isIgnoreComma) {
+      if (this.floatingPointMarker == ',') {
+        str = str.replace(/,/g, '.');
+      } else if (this.isIgnoreComma) {
         str = str.replace(/,/g, '');
       }
       str = this.convertBase2Dec(str);
