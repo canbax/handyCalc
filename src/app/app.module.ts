@@ -13,6 +13,7 @@ import { ClipboardModule } from 'ngx-clipboard';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AppComponent } from './app.component';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -36,7 +37,8 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
     ClipboardModule,
     MatSnackBarModule,
     MatCardModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

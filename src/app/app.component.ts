@@ -27,7 +27,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
   fnGroupOptions: Observable<MathFnGroup[]>;
 
   // results for 4 bases
-  results: string[] = ['', '', '', ''];
+  results: any[] = ['', '', '', ''];
   mode: string;
   degreeUnit: string = 'deg';
   degreeUnits: string[] = ['deg', 'rad', 'grad'];
@@ -55,6 +55,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
   suggestions = [];
   fnExpo = '';
   link2fn = '';
+  selectedFloatingPointPrecision = 3;
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
@@ -137,9 +138,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
       const t = typeof this.results[1];
       if (t == 'function' || t == 'undefined') {
         this.results[1] = '';
-      } else {
-        this.results[1] = this.results[1] + '';
+      } else if (t == 'number' && !Number.isInteger(this.results[1])) {
+        this.results[1] = this.results[1].toPrecision(this.selectedFloatingPointPrecision);
       }
+      this.results[1] = this.results[1] + '';
       this.calculateResultsOnOtherBases();
     } catch (e) {
       this.results = ['', '', '', ''];
@@ -372,6 +374,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   private setSuggestions() {
     // this.suggestions.filter(x => this.inp.toLowerCase().startsWith())
+  }
+
+  precisionChanged() {
+    this.compute();
   }
 
 }

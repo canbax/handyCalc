@@ -19,12 +19,24 @@
         </mat-autocomplete>
       </mat-form-field>
     </form>
-    <span class="">
-      {{fnExpo}}
-    </span>
-    <a *ngIf="link2fn.length > 0" target="_blank" [href]="link2fn">
-      <mat-icon>info</mat-icon>
-    </a>
+    <div>
+      <span class="">
+        {{fnExpo}}
+      </span>
+      <a *ngIf="link2fn.length > 0" target="_blank" [href]="link2fn">
+        <mat-icon>info</mat-icon>
+      </a>
+    </div>
+    <div>
+      <div>Precision for floating-point numbers</div>
+      <mat-form-field>
+        <mat-select [(value)]="selectedFloatingPointPrecision" (selectionChange)="precisionChanged()">
+          <mat-option *ngFor="let n of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]" [value]="n">
+            {{n}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="header">
