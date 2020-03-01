@@ -28,10 +28,20 @@
       </a>
     </div>
     <div class="container">
-      <div>Precision for floating-point numbers</div>
+      <div>Precision for floating-point numbers in result</div>
       <mat-form-field>
         <mat-select [(value)]="selectedFloatingPointPrecision" (selectionChange)="compute()">
           <mat-option *ngFor="let n of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]" [value]="n">
+            {{n}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="container">
+      <div>Number of digits in result</div>
+      <mat-form-field>
+        <mat-select [(value)]="numDigit4Results" (selectionChange)="compute()">
+          <mat-option *ngFor="let n of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" [value]="n">
             {{n}}
           </mat-option>
         </mat-select>

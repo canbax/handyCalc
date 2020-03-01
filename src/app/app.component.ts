@@ -55,7 +55,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
   suggestions = [];
   fnExpo = '';
   link2fn = '';
-  selectedFloatingPointPrecision = 3;
+  selectedFloatingPointPrecision = 2;
+  numDigit4Results = 6;
   isIgnoreComma = true;
   floatingPointMarker = '.';
 
@@ -144,9 +145,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
       if (t == 'function' || t == 'undefined') {
         this.results[1] = '';
       } else if (t == 'number' && !Number.isInteger(this.results[1])) {
-        this.results[1] = this.results[1].toPrecision(this.selectedFloatingPointPrecision);
+        this.results[1] = this.results[1].toFixed(this.selectedFloatingPointPrecision);
       }
-      this.results[1] = this.results[1] + '';
+      this.results[1] = (this.results[1] + '').substr(0, this.numDigit4Results);;
       this.calculateResultsOnOtherBases();
     } catch (e) {
       this.results = ['', '', '', ''];
@@ -168,9 +169,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
       return;
     }
     let n = Number(this.results[1]);
-    this.results[0] = n.toString(16);
-    this.results[2] = n.toString(8);
-    this.results[3] = n.toString(2);
+    this.results[0] = n.toString(16).substr(0, this.numDigit4Results);
+    this.results[2] = n.toString(8).substr(0, this.numDigit4Results);
+    this.results[3] = n.toString(2).substr(0, this.numDigit4Results);
   }
 
   private showSnackbar(txt: string) {
@@ -332,7 +333,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
       let r = this.convert2dec(s0, b);
       idx = s1.length + r.length;
       s = s1 + '' + r + s2;
-      console.log('converted :', s0, ' to ', r);
     }
     return s;
   }
