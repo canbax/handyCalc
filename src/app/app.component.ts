@@ -1,8 +1,8 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { Component, NgZone, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
-import { take, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { Subject, from } from 'rxjs';
-import { evaluate, parse, parser } from 'mathjs'
+import { Component, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { evaluate } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -13,8 +13,6 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-
-
 
 @Component({
   selector: 'app-root',
@@ -56,6 +54,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
   private readonly INP_CHANGE_DEBOUNCE = 300;
   suggestions = [];
   fnExpo = '';
+  link2fn = '';
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
@@ -99,8 +98,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
-    console.log('fnSelected: ', e);
     let s = e.option.value as string;
+    this.link2fn = 'https://mathjs.org/docs/reference/functions/' + s.substr(0, s.indexOf('(')) + '.html'
     s = s.substr(0, s.indexOf('(') + 1);
     this.inp = this.inp + s;
     let group = e.option.group.label;

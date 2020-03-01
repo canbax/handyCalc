@@ -1,4 +1,4 @@
-<mat-sidenav-container >
+<mat-sidenav-container>
   <mat-sidenav mode="side" #sidenav [(opened)]="isOpen" class="m-5" (disableClose)="true">
     <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="mode" (change)="onModeChange()">
       <mat-radio-button *ngFor="let m of modes" [value]="m">
@@ -22,6 +22,9 @@
     <span class="">
       {{fnExpo}}
     </span>
+    <a *ngIf="link2fn.length > 0" target="_blank" [href]="link2fn">
+      <mat-icon>info</mat-icon>
+    </a>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="header">
