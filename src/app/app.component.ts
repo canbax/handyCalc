@@ -11,7 +11,7 @@ import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-k
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
-import { MathFnGroup, _filter, fnGroups } from './math-fn';
+import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 
 
@@ -55,6 +55,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
   private readonly KEY_UP_DEBOUNCE = 510;
   private readonly INP_CHANGE_DEBOUNCE = 300;
   suggestions = [];
+  fnExpo = '';
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
@@ -100,8 +101,15 @@ export class AppComponent implements AfterViewChecked, OnInit {
   fnSelected(e: MatAutocompleteSelectedEvent) {
     console.log('fnSelected: ', e);
     let s = e.option.value as string;
-    s = s.substr(0, s.indexOf('(') + 1); 
+    s = s.substr(0, s.indexOf('(') + 1);
     this.inp = this.inp + s;
+    let group = e.option.group.label;
+    let val = e.option.value;
+
+    let idx = fnGroups.find(x => x.title == group).fnList.findIndex(x => x == val);
+    this.fnExpo = fnGroupExpo.find(x => x.title == group).fnList[idx];
+    setTimeout(() => this.isOpen = false, 0);
+    setTimeout(() => this.isOpen = true, 1);
   }
 
   onModeChange() {

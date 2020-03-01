@@ -8,7 +8,7 @@ mat-radio-group {
   margin: 15px 0;
 }
 
-.degree-radio{
+.degree-radio {
   display: flex;
   flex-direction: row;
   margin: 5px 0;
@@ -53,4 +53,8 @@ app-screen-keyboard {
 
 .m-5 {
   margin: 5px;
+}
+
+mat-sidenav {
+  max-width: 50vw;
 }

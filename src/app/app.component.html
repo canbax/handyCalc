@@ -1,12 +1,12 @@
-<mat-sidenav-container>
-  <mat-sidenav mode="side" #sidenav [(opened)]="isOpen">
+<mat-sidenav-container >
+  <mat-sidenav mode="side" #sidenav [(opened)]="isOpen" class="m-5" (disableClose)="true">
     <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="mode" (change)="onModeChange()">
       <mat-radio-button *ngFor="let m of modes" [value]="m">
         {{m}}
       </mat-radio-button>
     </mat-radio-group>
 
-    <form [formGroup]="fnListForm" class="m-5">
+    <form [formGroup]="fnListForm">
       <mat-form-field>
         <input type="text" matInput placeholder="Functions" formControlName="fnGroup" required
           [matAutocomplete]="autoGroup">
@@ -19,6 +19,9 @@
         </mat-autocomplete>
       </mat-form-field>
     </form>
+    <span class="">
+      {{fnExpo}}
+    </span>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="header">
