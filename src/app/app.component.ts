@@ -56,6 +56,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
   fnExpo = '';
   link2fn = '';
   selectedFloatingPointPrecision = 3;
+  isIgnoreComma = true;
+  floatingPointMarker = '.';
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
@@ -129,10 +131,13 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.modelChanged.next(text);
   }
 
-  private compute() {
+  compute() {
     try {
       let str = this.convertBrackets();
       str = this.convert4AngleUnit();
+      if (this.isIgnoreComma) {
+        str = str.replace(/,/g, '');
+      }
       str = this.convertBase2Dec(str);
       this.results[1] = evaluate(str);
       const t = typeof this.results[1];
@@ -257,16 +262,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
     return r;
   }
-
-  onDegreeUnitChange() {
-    this.compute();
-  }
-
-  onBaseChange(b: string) {
-    // this.base = b;
-    this.compute();
-  }
-
+  
   private sortTopological(items: TrigonometricFnArg[]): TrigonometricFnArg[] {
     let stack: TrigonometricFnArg[] = [];
 
@@ -374,10 +370,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   private setSuggestions() {
     // this.suggestions.filter(x => this.inp.toLowerCase().startsWith())
-  }
-
-  precisionChanged() {
-    this.compute();
   }
 
 }

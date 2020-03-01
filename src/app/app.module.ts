@@ -8,12 +8,12 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatDividerModule } from '@angular/material/divider';
 import { ClipboardModule } from 'ngx-clipboard';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatCardModule } from '@angular/material/card';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { AppComponent } from './app.component';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -33,12 +33,13 @@ import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.compo
     MatButtonModule,
     MatIconModule,
     MatGridListModule,
-    MatDividerModule,
     ClipboardModule,
     MatSnackBarModule,
     MatCardModule,
     MatAutocompleteModule,
-    MatSelectModule
+    MatSelectModule,
+    MatCheckboxModule,
+
   ],
   providers: [],
   bootstrap: [AppComponent]
