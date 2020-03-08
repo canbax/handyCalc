@@ -1,6 +1,6 @@
 <mat-sidenav-container>
   <mat-sidenav mode="side" #sidenav [(opened)]="isOpen" (disableClose)="true">
-    <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="mode" (change)="onModeChange()">
+    <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="settings.mode" (change)="onModeChange()">
       <mat-radio-button *ngFor="let m of modes" [value]="m">
         {{m}}
       </mat-radio-button>
@@ -8,8 +8,7 @@
 
     <form [formGroup]="fnListForm" class="container">
       <mat-form-field>
-        <input type="text" matInput placeholder="Functions" formControlName="fnGroup" required
-          [matAutocomplete]="autoGroup">
+        <input type="text" matInput placeholder="Functions" formControlName="fnGroup" [matAutocomplete]="autoGroup">
         <mat-autocomplete #autoGroup="matAutocomplete" (optionSelected)="fnSelected($event)">
           <mat-optgroup *ngFor="let group of fnGroupOptions | async" [label]="group.title">
             <mat-option *ngFor="let name of group.fnList" [value]="name">
@@ -30,7 +29,7 @@
     <div class="container">
       <div>Precision for floating-point numbers in result</div>
       <mat-form-field>
-        <mat-select [(value)]="selectedFloatingPointPrecision" (selectionChange)="compute()">
+        <mat-select [(value)]="settings.selectedFloatingPointPrecision" (selectionChange)="floatingPrecisionChanged()">
           <mat-option *ngFor="let n of [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]" [value]="n">
             {{n}}
           </mat-option>
@@ -40,7 +39,7 @@
     <div class="container">
       <div>Number of digits in result</div>
       <mat-form-field>
-        <mat-select [(value)]="numDigit4Results" (selectionChange)="compute()">
+        <mat-select [(value)]="settings.numDigit4Results" (selectionChange)="numDigit4ResultChanged()">
           <mat-option *ngFor="let n of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" [value]="n">
             {{n}}
           </mat-option>
@@ -48,12 +47,12 @@
       </mat-form-field>
     </div>
     <div class="container">
-      <mat-checkbox [disabled]="floatingPointMarker == ','" [(checked)]="isIgnoreComma" (change)="compute()">Ignore
+      <mat-checkbox [disabled]="settings.floatingPointMarker == ','" [(checked)]="settings.isIgnoreComma" (change)="isIgnoreCommaChanged()">Ignore
         commas</mat-checkbox>
     </div>
     <div class="container">
       <div>Use for floating-point numbers</div>
-      <mat-radio-group [(ngModel)]="floatingPointMarker" class="degree-radio" (change)="compute()">
+      <mat-radio-group [(ngModel)]="settings.floatingPointMarker" class="degree-radio" (change)="floatMarkerChanged()">
         <mat-radio-button value=".">.</mat-radio-button>
         <mat-radio-button value=",">,</mat-radio-button>
       </mat-radio-group>
@@ -83,7 +82,7 @@
           <mat-icon>history</mat-icon>
         </button>
         <div>
-          <div *ngIf="mode == 'programmer'">
+          <div *ngIf="settings.mode == 'programmer'">
             <mat-radio-group [(ngModel)]="base" (change)="compute()">
               <mat-radio-button *ngFor="let b of bases; let i = index" [value]="b">
                 <span class="result-base"> {{b}} &nbsp;&nbsp;</span>
@@ -94,7 +93,7 @@
               </mat-radio-button>
             </mat-radio-group>
           </div>
-          <div *ngIf="mode != 'programmer'">
+          <div *ngIf="settings.mode != 'programmer'">
             <span class="result-txt">{{results[1]}}</span>
             <button *ngIf="results[1].length > 0" mat-icon-button matSuffix (click)="copy(results[1])">
               <mat-icon>file_copy</mat-icon>

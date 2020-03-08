@@ -13,6 +13,7 @@ import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { UserSettingService, UserSetting } from './user-setting.service';
 
 @Component({
   selector: 'app-root',
@@ -28,7 +29,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   // results for 4 bases
   results: any[] = ['', '', '', ''];
-  mode: string;
+  settings: UserSetting;
   degreeUnit: string = 'deg';
   degreeUnits: string[] = ['deg', 'rad', 'grad'];
   bases: string[] = [];
@@ -57,16 +58,13 @@ export class AppComponent implements AfterViewChecked, OnInit {
   suggestions = [];
   fnExpo = '';
   link2fn = '';
-  selectedFloatingPointPrecision = 2;
-  numDigit4Results = 6;
-  isIgnoreComma = true;
-  floatingPointMarker = '.';
   isShowHistory = false;
   computeHistory: string[] = [];
 
-  constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
+  constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
+    private _usrSetting: UserSettingService) {
     this.modes = ['standard', 'extended', 'programmer'];
-    this.mode = this.modes[1];
+    this.settings = this._usrSetting.getAllUserSettings();
     let fn = this.debounce(this.compute.bind(this), this.INP_CHANGE_DEBOUNCE);
     this.modelChanged.pipe(
       distinctUntilChanged())
@@ -96,6 +94,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
       );
 
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
+
+    // localStorage.setItem()
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
@@ -113,13 +113,14 @@ export class AppComponent implements AfterViewChecked, OnInit {
   }
 
   onModeChange() {
-    this._screenKeyboard.setKeyboard(this.mode);
+    this._screenKeyboard.setKeyboard(this.settings.mode);
     this.calculateResultsOnOtherBases();
-    if (this.mode == 'programmer') {
+    if (this.settings.mode == 'programmer') {
       this.bases = ['HEX', 'DEC', 'OCT', 'BIN'];
     } else {
       this.bases = [];
     }
+    this._usrSetting.setSetting('mode', this.settings.mode);
   }
 
   ngAfterViewChecked(): void {
@@ -133,9 +134,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
     try {
       let str = this.convertBrackets();
       str = this.convert4AngleUnit();
-      if (this.floatingPointMarker == ',') {
+      if (this.settings.floatingPointMarker == ',') {
         str = str.replace(/,/g, '.');
-      } else if (this.isIgnoreComma) {
+      } else if (this.settings.isIgnoreComma) {
         str = str.replace(/,/g, '');
       }
       str = this.convertBase2Dec(str);
@@ -144,9 +145,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
       if (t == 'function' || t == 'undefined') {
         this.results[1] = '';
       } else if (t == 'number' && !Number.isInteger(this.results[1])) {
-        this.results[1] = this.results[1].toFixed(this.selectedFloatingPointPrecision);
+        this.results[1] = this.results[1].toFixed(this.settings.selectedFloatingPointPrecision);
       }
-      this.results[1] = (this.results[1] + '').substr(0, this.numDigit4Results);
+      this.results[1] = (this.results[1] + '').substr(0, this.settings.numDigit4Results);
       this.calculateResultsOnOtherBases();
     } catch (e) {
       this.results = ['', '', '', ''];
@@ -201,6 +202,27 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.computeHistory.splice(i, 1);
   }
 
+  floatingPrecisionChanged() {
+    this._usrSetting.setSetting('selectedFloatingPointPrecision', this.settings.selectedFloatingPointPrecision);
+    this.compute();
+  }
+
+  numDigit4ResultChanged() {
+    this._usrSetting.setSetting('numDigit4Results', this.settings.numDigit4Results);
+    this.compute();
+  }
+
+  isIgnoreCommaChanged() {
+    this.settings.isIgnoreComma = !this.settings.isIgnoreComma;
+    this._usrSetting.setSetting('isIgnoreComma', this.settings.isIgnoreComma);
+    this.compute();
+  }
+
+  floatMarkerChanged() {
+    this._usrSetting.setSetting('floatingPointMarker', this.settings.floatingPointMarker);
+    this.compute();
+  }
+
   private _filterGroup(value: string): MathFnGroup[] {
     if (value) {
       return fnGroups
@@ -211,7 +233,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
   }
 
   private calculateResultsOnOtherBases() {
-    if (this.mode != 'programmer') {
+    if (this.settings.mode != 'programmer') {
       return;
     }
     if (this.results[1] == undefined || this.results[1].length < 1) {
@@ -219,9 +241,9 @@ export class AppComponent implements AfterViewChecked, OnInit {
       return;
     }
     let n = Number(this.results[1]);
-    this.results[0] = n.toString(16).substr(0, this.numDigit4Results);
-    this.results[2] = n.toString(8).substr(0, this.numDigit4Results);
-    this.results[3] = n.toString(2).substr(0, this.numDigit4Results);
+    this.results[0] = n.toString(16).substr(0, this.settings.numDigit4Results);
+    this.results[2] = n.toString(8).substr(0, this.settings.numDigit4Results);
+    this.results[3] = n.toString(2).substr(0, this.settings.numDigit4Results);
   }
 
   private showSnackbar(txt: string) {
@@ -335,7 +357,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
   // math.js works with decimals
   private convertBase2Dec(s: string) {
-    if (this.mode != 'programmer') {
+    if (this.settings.mode != 'programmer') {
       return s;
     }
     let idx = 0;
