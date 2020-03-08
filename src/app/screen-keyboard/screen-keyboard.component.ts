@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { CalcBtn } from './CalcBtn';
 import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './keyboards';
 
@@ -7,7 +7,7 @@ import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './keyboard
   templateUrl: './screen-keyboard.component.html',
   styleUrls: ['./screen-keyboard.component.css']
 })
-export class ScreenKeyboardComponent implements OnInit {
+export class ScreenKeyboardComponent {
   @Input() currInp: string;
   @Output() screenKeyClicked = new EventEmitter<string>();
   @ViewChild('mainDiv', { static: false }) myDiv: ElementRef<HTMLElement>;
@@ -16,10 +16,6 @@ export class ScreenKeyboardComponent implements OnInit {
 
   constructor() {
     this.tiles = STD_KEYBOARD;
-  }
-
-  ngOnInit() {
-    
   }
 
   setKeyboard(mode: string) {

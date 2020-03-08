@@ -1,6 +1,6 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { Component, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { evaluate } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
@@ -67,10 +67,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder) {
     this.modes = ['standard', 'extended', 'programmer'];
     this.mode = this.modes[1];
+    let fn = this.debounce(this.compute.bind(this), this.INP_CHANGE_DEBOUNCE);
     this.modelChanged.pipe(
-      debounceTime(this.INP_CHANGE_DEBOUNCE),
       distinctUntilChanged())
-      .subscribe(x => { this.inp = x; this.compute(); });
+      .subscribe(x => { this.inp = x; fn(); });
 
     // to prevent the glitch when you press continously, debounceTime should be greater than 500ms 
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
@@ -398,6 +398,23 @@ export class AppComponent implements AfterViewChecked, OnInit {
     return isIn;
   }
 
-
-
+  // https://davidwalsh.name/javascript-debounce-function
+  // Returns a function, that, as long as it continues to be invoked, will not
+  // be triggered. The function will be called after it stops being called for
+  // N milliseconds. If `immediate` is passed, trigger the function on the
+  // leading edge, instead of the trailing.
+  private debounce(func: Function, wait: number, immediate: boolean = false) {
+    let timeout;
+    return function () {
+      const context = this, args = arguments;
+      const later = function () {
+        timeout = null;
+        if (!immediate) func.apply(context, args);
+      };
+      const callNow = immediate && !timeout;
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+      if (callNow) func.apply(context, args);
+    };
+  }
 }
