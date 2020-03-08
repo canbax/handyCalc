@@ -19,7 +19,7 @@ mat-radio-button {
 }
 
 .editor {
-  display: block;
+  width: 85%;
 }
 
 .container {

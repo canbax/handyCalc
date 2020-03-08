@@ -71,18 +71,17 @@
 
     <div class="m-5">
       <div>
-        <mat-form-field [style.fontSize]="16" class="editor">
+        <mat-form-field [style.fontSize]="16" class="editor" appearance="outline">
           <textarea #userInp (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput
             cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" [ngModel]='inp'
             (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10"></textarea>
-          <button mat-icon-button matSuffix (click)="copy(inp)">
-            <mat-icon>file_copy</mat-icon>
-          </button>
-          <button mat-icon-button matSuffix (click)="isShowHistory=!isShowHistory;">
-            <mat-icon>history</mat-icon>
-          </button>
         </mat-form-field>
-
+        <button mat-icon-button matSuffix (click)="copy(inp)">
+          <mat-icon>file_copy</mat-icon>
+        </button>
+        <button mat-icon-button matSuffix (click)="isShowHistory=!isShowHistory;">
+          <mat-icon>history</mat-icon>
+        </button>
         <div>
           <div *ngIf="mode == 'programmer'">
             <mat-radio-group [(ngModel)]="base" (change)="compute()">
