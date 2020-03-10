@@ -60,6 +60,11 @@ export class AppComponent implements AfterViewChecked, OnInit {
   link2fn = '';
   isShowHistory = false;
   computeHistory: string[] = [];
+  cssThemes = [
+    { path: 'assets/prebuilt-themes/deeppurple-amber.css', txt: 'deep purple-amber' },
+    { path: 'assets/prebuilt-themes/indigo-pink.css', txt: 'indigo pink' },
+    { path: 'assets/prebuilt-themes/pink-bluegrey.css', txt: 'pink blue-grey' },
+    { path: 'assets/prebuilt-themes/purple-green.css', txt: 'purple green' }];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService) {
@@ -74,6 +79,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
     this.keyPressed.subscribe(x => setTimeout(() => { this._screenKeyboard.simulateKeyPress(false, x) }, this.KEY_UP_DEBOUNCE));
     this.isOpen = false;
+    this.onCssThemeChange();
   }
 
   ngOnInit() {
@@ -92,10 +98,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
         startWith(''),
         map(value => this._filterGroup(value))
       );
-
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
-
-    // localStorage.setItem()
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
@@ -221,6 +224,12 @@ export class AppComponent implements AfterViewChecked, OnInit {
   floatMarkerChanged() {
     this._usrSetting.setSetting('floatingPointMarker', this.settings.floatingPointMarker);
     this.compute();
+  }
+
+  onCssThemeChange() {
+    // assets/prebuilt-themes/
+    document.getElementById('theme-asset')['href'] = this.settings.path2CssTheme;
+    this._usrSetting.setSetting('path2CssTheme', this.settings.path2CssTheme);
   }
 
   private _filterGroup(value: string): MathFnGroup[] {

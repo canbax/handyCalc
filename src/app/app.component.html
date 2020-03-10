@@ -56,12 +56,18 @@
               <mat-radio-button value=",">,</mat-radio-button>
             </mat-radio-group>
           </div>
+          <mat-radio-group [(ngModel)]="settings.path2CssTheme"
+            (change)="onCssThemeChange()">
+            <mat-radio-button *ngFor="let t of cssThemes" [value]="t.path">
+              {{t.txt}}
+            </mat-radio-button>
+          </mat-radio-group>
         </div>
       </mat-expansion-panel>
       <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Information
+            Info
           </mat-panel-title>
         </mat-expansion-panel-header>
         <form [formGroup]="fnListForm" class="container">

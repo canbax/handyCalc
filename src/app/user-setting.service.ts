@@ -6,6 +6,7 @@ export interface UserSetting {
   numDigit4Results: number;
   isIgnoreComma: boolean;
   floatingPointMarker: string;
+  path2CssTheme: string;
 }
 
 @Injectable({
@@ -14,7 +15,7 @@ export interface UserSetting {
 export class UserSettingService {
   private settings: UserSetting = {
     mode: 'extended', floatingPointMarker: '.', isIgnoreComma: true,
-    numDigit4Results: 6, selectedFloatingPointPrecision: 2
+    numDigit4Results: 6, selectedFloatingPointPrecision: 2, path2CssTheme: 'assets/prebuilt-themes/indigo-pink.css'
   };
 
   constructor() {
@@ -33,7 +34,7 @@ export class UserSettingService {
     if (i == null || i == undefined || i.length < 1) {
       return this.settings[name];
     }
-    if (name == 'mode' || name == 'floatingPointMarker') {
+    if (name == 'mode' || name == 'floatingPointMarker' || name == 'path2CssTheme') {
       return i;
     }
     if (name == 'selectedFloatingPointPrecision' || name == 'numDigit4Results') {
