@@ -14,6 +14,7 @@ import { startWith, map } from 'rxjs/operators';
 import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserSettingService, UserSetting } from './user-setting.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -65,9 +66,10 @@ export class AppComponent implements AfterViewChecked, OnInit {
     { path: 'assets/prebuilt-themes/indigo-pink.css', txt: 'indigo pink' },
     { path: 'assets/prebuilt-themes/pink-bluegrey.css', txt: 'pink blue-grey' },
     { path: 'assets/prebuilt-themes/purple-green.css', txt: 'purple green' }];
+  langs = { 'tr': 'Türkçe', 'en': 'English' };
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
-    private _usrSetting: UserSettingService) {
+    private _usrSetting: UserSettingService, public translate: TranslateService) {
     this.modes = ['standard', 'extended', 'programmer'];
     this.settings = this._usrSetting.getAllUserSettings();
     let fn = this.debounce(this.compute.bind(this), this.INP_CHANGE_DEBOUNCE);
@@ -80,6 +82,8 @@ export class AppComponent implements AfterViewChecked, OnInit {
     this.keyPressed.subscribe(x => setTimeout(() => { this._screenKeyboard.simulateKeyPress(false, x) }, this.KEY_UP_DEBOUNCE));
     this.isOpen = false;
     this.onCssThemeChange();
+    translate.addLangs(['en', 'tr']);
+    translate.setDefaultLang(this.settings.lang);
   }
 
   ngOnInit() {
@@ -99,6 +103,11 @@ export class AppComponent implements AfterViewChecked, OnInit {
         map(value => this._filterGroup(value))
       );
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
+  }
+
+  switchLang() {
+    this._usrSetting.setSetting('lang', this.settings.lang);
+    this.translate.use(this.settings.lang);
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {

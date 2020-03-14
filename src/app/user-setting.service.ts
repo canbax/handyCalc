@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 export interface UserSetting {
   mode: string;
+  lang: string;
   selectedFloatingPointPrecision: number;
   numDigit4Results: number;
   isIgnoreComma: boolean;
@@ -14,7 +15,7 @@ export interface UserSetting {
 })
 export class UserSettingService {
   private settings: UserSetting = {
-    mode: 'extended', floatingPointMarker: '.', isIgnoreComma: true,
+    mode: 'extended', floatingPointMarker: '.', isIgnoreComma: true, lang: 'tr',
     numDigit4Results: 6, selectedFloatingPointPrecision: 2, path2CssTheme: 'assets/prebuilt-themes/indigo-pink.css'
   };
 
@@ -34,7 +35,7 @@ export class UserSettingService {
     if (i == null || i == undefined || i.length < 1) {
       return this.settings[name];
     }
-    if (name == 'mode' || name == 'floatingPointMarker' || name == 'path2CssTheme') {
+    if (name == 'mode' || name == 'floatingPointMarker' || name == 'path2CssTheme' || name == 'lang') {
       return i;
     }
     if (name == 'selectedFloatingPointPrecision' || name == 'numDigit4Results') {

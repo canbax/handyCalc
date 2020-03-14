@@ -1,29 +1,34 @@
 <mat-sidenav-container>
   <mat-sidenav mode="side" #sidenav [(opened)]="isOpen" (disableClose)="true">
     <mat-accordion>
-      <mat-expansion-panel [expanded]="true" >
+      <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Settings
+            {{'Settings'|translate}}
           </mat-panel-title>
         </mat-expansion-panel-header>
         <div>
-          <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="settings.mode"
-            (change)="onModeChange()">
-            <mat-radio-button *ngFor="let m of modes" [value]="m">
-              {{m}}
-            </mat-radio-button>
-          </mat-radio-group>
-          <div class="container">
-            <span class="">
-              {{fnExpo}}
-            </span>
-            <a *ngIf="link2fn.length > 0" target="_blank" [href]="link2fn">
-              <mat-icon>info</mat-icon>
-            </a>
+          <div class="form-part">
+            <label>Mod</label>
+            <mat-radio-group aria-labelledby="example-radio-group-label" [(ngModel)]="settings.mode"
+              (change)="onModeChange()">
+              <mat-radio-button *ngFor="let m of modes" [value]="m">
+                {{m|translate}}
+              </mat-radio-button>
+            </mat-radio-group>
           </div>
-          <div class="container">
-            <div>Precision for floating-point numbers in result</div>
+          <div class="form-part">
+            <div>{{'Language'|translate}}</div>
+            <mat-form-field>
+              <mat-select [(value)]="settings.lang" (selectionChange)="switchLang()">
+                <mat-option *ngFor="let language of translate.getLangs()" [value]="language">
+                  {{langs[language]}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div class="form-part">
+            <div>{{'Precision for floating-point numbers in result'|translate}}</div>
             <mat-form-field>
               <mat-select [(value)]="settings.selectedFloatingPointPrecision"
                 (selectionChange)="floatingPrecisionChanged()">
@@ -33,8 +38,8 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="container">
-            <div>Number of digits in result</div>
+          <div class="form-part">
+            <div>{{'Number of digits in result'|translate}}</div>
             <mat-form-field>
               <mat-select [(value)]="settings.numDigit4Results" (selectionChange)="numDigit4ResultChanged()">
                 <mat-option *ngFor="let n of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]" [value]="n">
@@ -43,36 +48,40 @@
               </mat-select>
             </mat-form-field>
           </div>
-          <div class="container">
+          <div class="form-part">
             <mat-checkbox [disabled]="settings.floatingPointMarker == ','" [(checked)]="settings.isIgnoreComma"
-              (change)="isIgnoreCommaChanged()">Ignore
-              commas</mat-checkbox>
+              (change)="isIgnoreCommaChanged()">
+              {{'Ignore commas'|translate}}
+            </mat-checkbox>
           </div>
-          <div class="container">
-            <div>Use for floating-point numbers</div>
+          <div class="form-part">
+            <div>{{'Use for floating-point numbers'|translate}}</div>
             <mat-radio-group [(ngModel)]="settings.floatingPointMarker" class="degree-radio"
               (change)="floatMarkerChanged()">
               <mat-radio-button value=".">.</mat-radio-button>
               <mat-radio-button value=",">,</mat-radio-button>
             </mat-radio-group>
           </div>
-          <mat-radio-group [(ngModel)]="settings.path2CssTheme"
-            (change)="onCssThemeChange()">
-            <mat-radio-button *ngFor="let t of cssThemes" [value]="t.path">
-              {{t.txt}}
-            </mat-radio-button>
-          </mat-radio-group>
+          <div class="form-part">
+            <div>{{'Style'|translate}}</div>
+            <mat-radio-group [(ngModel)]="settings.path2CssTheme" (change)="onCssThemeChange()">
+              <mat-radio-button *ngFor="let t of cssThemes" [value]="t.path">
+                {{t.txt}}
+              </mat-radio-button>
+            </mat-radio-group>
+          </div>
         </div>
       </mat-expansion-panel>
-      <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+      <mat-expansion-panel>
         <mat-expansion-panel-header>
           <mat-panel-title>
-            Info
+            {{'Info'|translate}}
           </mat-panel-title>
         </mat-expansion-panel-header>
         <form [formGroup]="fnListForm" class="container">
           <mat-form-field>
-            <input type="text" matInput placeholder="Functions" formControlName="fnGroup" [matAutocomplete]="autoGroup">
+            <input type="text" matInput [placeholder]="'Functions'|translate" formControlName="fnGroup"
+              [matAutocomplete]="autoGroup">
             <mat-autocomplete #autoGroup="matAutocomplete" (optionSelected)="fnSelected($event)">
               <mat-optgroup *ngFor="let group of fnGroupOptions | async" [label]="group.title">
                 <mat-option *ngFor="let name of group.fnList" [value]="name">
@@ -81,6 +90,14 @@
               </mat-optgroup>
             </mat-autocomplete>
           </mat-form-field>
+          <div>
+            <span class="">
+              {{fnExpo}}
+            </span>
+            <a *ngIf="link2fn.length > 0" target="_blank" [href]="link2fn">
+              <mat-icon>info</mat-icon>
+            </a>
+          </div>
         </form>
       </mat-expansion-panel>
     </mat-accordion>
