@@ -1,5 +1,5 @@
 import { CdkTextareaAutosize } from '@angular/cdk/text-field';
-import { Component, ViewChild, AfterViewChecked, ElementRef, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { evaluate } from 'mathjs'
@@ -21,7 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements AfterViewChecked, OnInit {
+export class AppComponent implements OnInit {
 
   fnListForm: FormGroup = this._formBuilder.group({
     fnGroup: '',
@@ -108,6 +108,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
   switchLang() {
     this._usrSetting.setSetting('lang', this.settings.lang);
     this.translate.use(this.settings.lang);
+    this.refreshSideNav();
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
@@ -120,8 +121,7 @@ export class AppComponent implements AfterViewChecked, OnInit {
 
     let idx = fnGroups.find(x => x.title == group).fnList.findIndex(x => x == val);
     this.fnExpo = fnGroupExpo.find(x => x.title == group).fnList[idx];
-    setTimeout(() => this.isOpen = false, 0);
-    setTimeout(() => this.isOpen = true, 1);
+    this.refreshSideNav();
   }
 
   onModeChange() {
@@ -133,9 +133,6 @@ export class AppComponent implements AfterViewChecked, OnInit {
       this.bases = [];
     }
     this._usrSetting.setSetting('mode', this.settings.mode);
-  }
-
-  ngAfterViewChecked(): void {
   }
 
   changed(text: string) {
@@ -239,6 +236,11 @@ export class AppComponent implements AfterViewChecked, OnInit {
     // assets/prebuilt-themes/
     document.getElementById('theme-asset')['href'] = this.settings.path2CssTheme;
     this._usrSetting.setSetting('path2CssTheme', this.settings.path2CssTheme);
+  }
+
+  private refreshSideNav() {
+    setTimeout(() => this.isOpen = false, 0);
+    setTimeout(() => this.isOpen = true, 1);
   }
 
   private _filterGroup(value: string): MathFnGroup[] {
