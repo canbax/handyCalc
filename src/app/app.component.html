@@ -114,11 +114,30 @@
     </div>
 
     <div class="m-5">
+
+      <div [hidden]="settings.mode != 'date & time'">
+        <mat-form-field class="editor">
+          <mat-chip-list #chipList>
+            <mat-chip *ngFor="let d of dates" [selectable]="false" [removable]="true" (removed)="remove(fruit)">
+              {{d}}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input placeholder="New fruit..." [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[]"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="add($event)" [ngModel]='inp'>
+          </mat-chip-list>
+        </mat-form-field>
+        <input type="text" id="date-inp">
+        <button (click)="addDate()">add date</button>
+
+
+      </div>
       <div>
-        <mat-form-field [style.fontSize]="16" class="editor" appearance="outline">
+        <mat-form-field *ngIf="settings.mode != 'date & time'" [style.fontSize]="16" class="editor"
+          appearance="outline">
           <textarea #userInp (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput
             cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" [ngModel]='inp'
-            (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10"></textarea>
+            (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10">
+            </textarea>
         </mat-form-field>
         <button mat-icon-button matSuffix (click)="copy(inp)">
           <mat-icon>file_copy</mat-icon>

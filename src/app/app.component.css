@@ -69,3 +69,7 @@ mat-sidenav {
   border: 1px solid #f0f0f0;
   border-radius: 12px;
 }
+
+.mat-standard-chip:focus {
+  outline: none;
+}

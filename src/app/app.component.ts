@@ -15,6 +15,8 @@ import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserSettingService, UserSetting } from './user-setting.service';
 import { TranslateService } from '@ngx-translate/core';
+import flatpickr from 'flatpickr';
+
 
 @Component({
   selector: 'app-root',
@@ -43,6 +45,7 @@ export class AppComponent implements OnInit {
   private keyPressed: Subject<string> = new Subject<string>();
   isOpen: boolean;
   @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize;
+
   @ViewChild(ScreenKeyboardComponent, { static: false })
   private _screenKeyboard: ScreenKeyboardComponent;
   @ViewChild('userInp', { static: false })
@@ -67,10 +70,11 @@ export class AppComponent implements OnInit {
     { path: 'assets/prebuilt-themes/pink-bluegrey.css', txt: 'pink blue-grey' },
     { path: 'assets/prebuilt-themes/purple-green.css', txt: 'purple green' }];
   langs = { 'tr': 'Türkçe', 'en': 'English' };
+  dates = [];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
-    this.modes = ['standard', 'extended', 'programmer'];
+    this.modes = ['standard', 'extended', 'programmer', 'date & time'];
     this.settings = this._usrSetting.getAllUserSettings();
     let fn = this.debounce(this.compute.bind(this), this.INP_CHANGE_DEBOUNCE);
     this.modelChanged.pipe(
@@ -85,6 +89,7 @@ export class AppComponent implements OnInit {
     translate.addLangs(['en', 'tr']);
     translate.setDefaultLang(this.settings.lang);
   }
+
 
   ngOnInit() {
     setTimeout(() => this.onModeChange(), 0);
@@ -103,6 +108,15 @@ export class AppComponent implements OnInit {
         map(value => this._filterGroup(value))
       );
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
+    
+    flatpickr('#date-inp', {
+      defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
+    });
+  }
+
+  addDate() {
+    let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0].getTime();
+    this.dates.push(new Date(d1).toDateString());
   }
 
   switchLang() {

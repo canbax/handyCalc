@@ -25,7 +25,9 @@
               "src/manifest.webmanifest"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "node_modules/flatpickr/dist/flatpickr.min.css",
+              "node_modules/flatpickr/dist/themes/material_blue.css"
             ],
             "scripts": []
           },

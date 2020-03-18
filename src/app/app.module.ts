@@ -19,6 +19,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { AppComponent } from './app.component';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -55,6 +56,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MatListModule,
     MatExpansionModule,
     HttpClientModule,
+    MatChipsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
