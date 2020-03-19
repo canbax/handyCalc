@@ -10,5 +10,14 @@
   "Use for floating-point numbers": "Ondalıklı sayı gösterimi",
   "Info": "Bilgi",
   "Style": "Stil",
-  "Functions": "Fonksiyonlar"
+  "Functions": "Fonksiyonlar",
+  "TimeUnits": {
+    "year": "yıl",
+    "month": "ay",
+    "day": "gün",
+    "hour": "saat",
+    "minute": "dakika",
+    "second": "saniye",
+    "millisecond": "mili saniye"
+  }
 }

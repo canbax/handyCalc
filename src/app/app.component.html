@@ -118,12 +118,13 @@
       <div [hidden]="settings.mode != 'date & time'">
         <mat-form-field class="editor">
           <mat-chip-list #chipList>
-            <mat-chip *ngFor="let d of dates" [selectable]="false" [removable]="true" (removed)="remove(fruit)">
-              {{d}}
+            <mat-chip *ngFor="let d of dateChips; let i = index" [removable]="true" (removed)="remove(i)">
+              {{d.str}}
               <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
             </mat-chip>
-            <input placeholder="New fruit..." [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[]"
-              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="add($event)" [ngModel]='inp'>
+            <input #userDateInp [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[13]"
+              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="add($event)" [ngModel]='inp'
+              (ngModelChange)='changed($event)'>
           </mat-chip-list>
         </mat-form-field>
         <input type="text" id="date-inp">

@@ -5,3 +5,9 @@ export interface TrigonometricFnArg {
   topologicalOrder: number;
   isMarked: boolean;
 }
+
+export interface DateTimeChip {
+  val: number;
+  str: string;
+  isOp: boolean;
+}

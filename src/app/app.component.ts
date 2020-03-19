@@ -6,7 +6,7 @@ import { evaluate } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
-import { TrigonometricFnArg } from './trigonometric-fn-arg';
+import { TrigonometricFnArg, DateTimeChip } from './meta-types';
 import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-keyboard/keyboards';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -16,7 +16,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { UserSettingService, UserSetting } from './user-setting.service';
 import { TranslateService } from '@ngx-translate/core';
 import flatpickr from 'flatpickr';
-
+import { ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material/chips';
 
 @Component({
   selector: 'app-root',
@@ -50,6 +51,8 @@ export class AppComponent implements OnInit {
   private _screenKeyboard: ScreenKeyboardComponent;
   @ViewChild('userInp', { static: false })
   private _userInp: ElementRef;
+  @ViewChild('userDateInp', { static: false })
+  private _usrDateInp: ElementRef;
   private hex2dec = {
     '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
     'a': 10, 'b': 11, 'c': 12, 'd': 13, 'e': 14, 'f': 15, 'A': 10, 'B': 11, 'C': 12, 'D': 13, 'E': 14, 'F': 15
@@ -70,7 +73,8 @@ export class AppComponent implements OnInit {
     { path: 'assets/prebuilt-themes/pink-bluegrey.css', txt: 'pink blue-grey' },
     { path: 'assets/prebuilt-themes/purple-green.css', txt: 'purple green' }];
   langs = { 'tr': 'Türkçe', 'en': 'English' };
-  dates = [];
+  dateChips: DateTimeChip[] = [];
+  readonly separatorKeysCodes: number[] = [ENTER];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -108,15 +112,15 @@ export class AppComponent implements OnInit {
         map(value => this._filterGroup(value))
       );
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
-    
+
     flatpickr('#date-inp', {
       defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
     });
   }
 
   addDate() {
-    let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0].getTime();
-    this.dates.push(new Date(d1).toDateString());
+    let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0] as Date;
+    this.dateChips.push({ isOp: false, str: d1.toLocaleString(), val: d1.getTime() });
   }
 
   switchLang() {
@@ -147,6 +151,7 @@ export class AppComponent implements OnInit {
       this.bases = [];
     }
     this._usrSetting.setSetting('mode', this.settings.mode);
+    this.refreshSideNav();
   }
 
   changed(text: string) {
@@ -155,6 +160,10 @@ export class AppComponent implements OnInit {
 
   compute() {
     try {
+      if (this.settings.mode == 'date & time') {
+        this.compute4dateTime();
+        return;
+      }
       let str = this.convertBrackets();
       str = this.convert4AngleUnit();
       if (this.settings.floatingPointMarker == ',') {
@@ -178,6 +187,15 @@ export class AppComponent implements OnInit {
     }
   }
 
+  private compute4dateTime() {
+    this.inp = this.inp.trim();
+    if (this.inp.length > 1) {
+      this.dateChips.push({ isOp: false, str: this.inp, val: Number(this.inp) });
+      this.inp = '';
+    }
+    console.log('compute4dateTime: ', this.inp);
+  }
+
   copy(txt: string) {
     this._clipboardService.copyFromContent(txt);
     this.showSnackbar(`'${txt}' copied!`);
@@ -185,7 +203,11 @@ export class AppComponent implements OnInit {
 
   onScreenKeyClicked(txt: string) {
     this.modelChanged.next(txt);
-    this._userInp.nativeElement.focus();
+    if (this.settings.mode != 'date & time') {
+      this._userInp.nativeElement.focus();
+    } else {
+      this._usrDateInp.nativeElement.focus();
+    }
   }
 
   onKeyDown(e: KeyboardEvent) {
@@ -252,9 +274,25 @@ export class AppComponent implements OnInit {
     this._usrSetting.setSetting('path2CssTheme', this.settings.path2CssTheme);
   }
 
+  add(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+
+    this.dateChips.push({ val: Number(value), str: value, isOp: true });
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  remove(index: number): void {
+    this.dateChips.splice(index, 1);
+  }
+
   private refreshSideNav() {
-    setTimeout(() => this.isOpen = false, 0);
-    setTimeout(() => this.isOpen = true, 1);
+    let state = this.isOpen;
+    setTimeout(() => this.isOpen = !state, 0);
+    setTimeout(() => this.isOpen = state, 1);
   }
 
   private _filterGroup(value: string): MathFnGroup[] {

@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { CalcBtn } from './CalcBtn';
-import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './keyboards';
+import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD, DATETIME_KEYBOARD } from './keyboards';
 
 @Component({
   selector: 'app-screen-keyboard',
@@ -27,6 +27,9 @@ export class ScreenKeyboardComponent {
       this.numCol = 6;
     } else if (mode == 'programmer') {
       this.tiles = PROGRAMMER_KEYBOARD;
+      this.numCol = 6;
+    } else if (mode == 'date & time') {
+      this.tiles = DATETIME_KEYBOARD;
       this.numCol = 6;
     }
   }
