@@ -122,10 +122,15 @@
               {{d.str}}
               <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
             </mat-chip>
-            <input #userDateInp [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[13]"
-              [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="add($event)" [ngModel]='inp'
-              (ngModelChange)='changed($event)'>
+            <input #userDateInp2 #userDateInp="matAutocompleteTrigger" [matAutocomplete]="auto"
+              [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[13]" [matChipInputAddOnBlur]="false"
+              (matChipInputTokenEnd)="add($event)">
           </mat-chip-list>
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="timeUnitSelected($event)">
+            <mat-option *ngFor="let m of ['year', 'month', 'day']">
+              {{m}}
+            </mat-option>
+          </mat-autocomplete>
         </mat-form-field>
         <input type="text" id="date-inp">
         <button (click)="addDate()">add date</button>

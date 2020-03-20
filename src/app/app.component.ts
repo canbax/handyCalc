@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
-import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UserSettingService, UserSetting } from './user-setting.service';
 import { TranslateService } from '@ngx-translate/core';
 import flatpickr from 'flatpickr';
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit {
   private _screenKeyboard: ScreenKeyboardComponent;
   @ViewChild('userInp', { static: false })
   private _userInp: ElementRef;
-  @ViewChild('userDateInp', { static: false })
+  @ViewChild('userDateInp2', { static: false })
   private _usrDateInp: ElementRef;
   private hex2dec = {
     '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
@@ -75,6 +75,9 @@ export class AppComponent implements OnInit {
   langs = { 'tr': 'Türkçe', 'en': 'English' };
   dateChips: DateTimeChip[] = [];
   readonly separatorKeysCodes: number[] = [ENTER];
+  isTimeUnitAutoCompleteOpen = false;
+  @ViewChild('userDateInp', { static: false })
+  private _dateAutoComplete: MatAutocompleteTrigger;
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -83,7 +86,7 @@ export class AppComponent implements OnInit {
     let fn = this.debounce(this.compute.bind(this), this.INP_CHANGE_DEBOUNCE);
     this.modelChanged.pipe(
       distinctUntilChanged())
-      .subscribe(x => { this.inp = x; fn(); });
+      .subscribe(x => { console.log('x = ', x); this.inp = x; fn(); });
 
     // to prevent the glitch when you press continously, debounceTime should be greater than 500ms 
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
@@ -188,11 +191,15 @@ export class AppComponent implements OnInit {
   }
 
   private compute4dateTime() {
-    this.inp = this.inp.trim();
-    if (this.inp.length > 1) {
-      this.dateChips.push({ isOp: false, str: this.inp, val: Number(this.inp) });
-      this.inp = '';
-    }
+
+    console.log('compute4dateTime panelOpen ', this._dateAutoComplete.panelOpen);
+    // this._dateAutoComplete.openPanel();
+    // this.inp = this.inp.trim();
+    // if (this.inp.length > 1) {
+    //   this.dateChips.push({ isOp: false, str: this.inp, val: Number(this.inp) });
+    //   this.inp = '';
+    // }
+
     console.log('compute4dateTime: ', this.inp);
   }
 
@@ -287,6 +294,13 @@ export class AppComponent implements OnInit {
 
   remove(index: number): void {
     this.dateChips.splice(index, 1);
+  }
+
+  timeUnitSelected(e) {
+    let s = this._usrDateInp.nativeElement.value.trim();
+    let unit = e.option.viewValue;
+    this.dateChips.push({ isOp: false, str: s + unit, val: Number(s) });
+    this._usrDateInp.nativeElement.value = '';
   }
 
   private refreshSideNav() {
