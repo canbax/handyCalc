@@ -118,13 +118,13 @@
       <div [hidden]="settings.mode != 'date & time'">
         <mat-form-field class="editor" appearance="outline">
           <mat-chip-list #chipList>
-            <mat-chip *ngFor="let d of dateChips; let i = index" [removable]="true" (removed)="remove(i)">
+            <mat-chip *ngFor="let d of dateChips; let i = index" [removable]="true" (removed)="removeChip(i)">
               {{d.str}}
               <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
             <input #userDateInp2 #userDateInp="matAutocompleteTrigger" [matAutocomplete]="auto"
               [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[13, 32]" [matChipInputAddOnBlur]="false"
-              (matChipInputTokenEnd)="add($event)" (change)="syncInp()">
+              (matChipInputTokenEnd)="addChip($event)" (change)="syncInp()">
           </mat-chip-list>
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)="timeUnitSelected($event)">
             <mat-option *ngFor="let m of dateUnits">

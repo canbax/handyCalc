@@ -78,6 +78,7 @@ export class AppComponent implements OnInit {
   private _dateAutoComplete: MatAutocompleteTrigger;
   opChips4DateTime = ['+', '-', '*', '/', '÷', '(', ')', '^'];
   dateUnits = [];
+  isDateSelected = false;
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -103,7 +104,7 @@ export class AppComponent implements OnInit {
     this.onCssThemeChange();
     translate.addLangs(['en', 'tr']);
     translate.setDefaultLang(this.settings.lang);
-    this.dateUnits = Object.keys(TIME_UNIT_STR[this.settings.lang]);
+    this.dateUnits = Object.values(TIME_UNIT_STR[this.settings.lang]);
   }
 
   ngOnInit() {
@@ -125,10 +126,16 @@ export class AppComponent implements OnInit {
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
 
     flatpickr('#date-inp', {
-      defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true, onClose: () => {
-        let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0] as Date;
-        this.dateChips.push({ isHumanDate: true, str: d1.toLocaleString(), val: d1.getTime() });
-      }
+      defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
+      onClose: () => {
+        if (this.isDateSelected) {
+          let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0] as Date;
+          this.processInp4chips();
+          this.dateChips.push({ isHumanDate: true, str: d1.toLocaleString(), val: d1.getTime() });
+          this.isDateSelected = false;
+          this.compute();
+        }
+      }, onChange: () => { this.isDateSelected = true; }
     });
   }
 
@@ -140,9 +147,12 @@ export class AppComponent implements OnInit {
   }
 
   switchLang() {
-    this._usrSetting.setSetting('lang', this.settings.lang);
-    this.translate.use(this.settings.lang);
-    this.refreshSideNav();
+    this.translate.use(this.settings.lang).subscribe(() => {
+      this._usrSetting.setSetting('lang', this.settings.lang);
+      this.dateUnits = Object.values(TIME_UNIT_STR[this.settings.lang]);
+      this._screenKeyboard.setKeyboard(this.settings.mode);
+      this.refreshSideNav();
+    });
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
@@ -204,22 +214,6 @@ export class AppComponent implements OnInit {
       this.results = ['', '', '', ''];
       console.log('e: ', e);
     }
-  }
-
-  private compute4dateTime(): string {
-    let s = '';
-    for (let c of this.dateChips) {
-      if (c.isHumanDate) {
-        s += c.val;
-      } else {
-        s += c.str;
-      }
-    }
-    for (let u in TIME_UNITS) {
-      s = s.replace(new RegExp(u, 'g'), '*' + TIME_UNITS[u]);
-    }
-    console.log('compute4dateTime:', s);
-    return s;
   }
 
   copy(txt: string) {
@@ -300,19 +294,14 @@ export class AppComponent implements OnInit {
     this._usrSetting.setSetting('path2CssTheme', this.settings.path2CssTheme);
   }
 
-  add(event: MatChipInputEvent): void {
-    const input = event.input;
+  addChip(event: MatChipInputEvent): void {
     const value = event.value;
-
+    this.processInp4chips();
     this.dateChips.push({ val: Number(value), str: value, isHumanDate: false });
-    // Reset the input value
-    if (input) {
-      input.value = '';
-    }
     this.compute();
   }
 
-  remove(index: number): void {
+  removeChip(index: number): void {
     this.dateChips.splice(index, 1);
     this.compute();
   }
@@ -320,14 +309,37 @@ export class AppComponent implements OnInit {
   timeUnitSelected(e) {
     let s = this._usrDateInp.nativeElement.value.trim();
     let unit = e.option.viewValue;
+    this.processInp4chips();
     this.dateChips.push({ isHumanDate: false, str: s + unit, val: Number(s) });
-    this._usrDateInp.nativeElement.value = '';
-    this.inp = '';
     this.compute();
   }
 
-  private getResult4DateTime(result: string): string {
+  private processInp4chips() {
+    let s = this._usrDateInp.nativeElement.value;
+    if (this.opChips4DateTime.includes(s)) {
+      this.dateChips.push({ isHumanDate: false, str: s, val: 0 });
+    }
+    this._usrDateInp.nativeElement.value = '';
+    this.inp = '';
+  }
+
+  private compute4dateTime(): string {
     let s = '';
+    for (let c of this.dateChips) {
+      if (c.isHumanDate) {
+        s += c.val;
+      } else {
+        s += c.str;
+      }
+    }
+    for (let u in TIME_UNIT_STR[this.settings.lang]) {
+      s = s.replace(new RegExp(TIME_UNIT_STR[this.settings.lang][u], 'g'), '*' + TIME_UNITS[u]);
+    }
+    console.log('compute4dateTime:', s);
+    return s;
+  }
+
+  private getResult4DateTime(result: string): string {
     let hasHumanDate = false;
     for (let c of this.dateChips) {
       if (c.isHumanDate) {
@@ -337,10 +349,8 @@ export class AppComponent implements OnInit {
     if (hasHumanDate) {
       return new Date(Number(result)).toLocaleString();
     } else {
-      return getPrettyTime(Number(result));
+      return getPrettyTime(Number(result), this.settings.lang);
     }
-
-    return s;
   }
 
   private refreshSideNav() {
