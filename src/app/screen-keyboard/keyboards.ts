@@ -117,31 +117,29 @@ export const DATETIME_KEYBOARD: CalcBtn[] = [
   { txt: 'day', fn: (s) => { return s + ' day' }, ids: ['day'], isOp: true },
   { txt: 'hour', fn: (s) => { return s + ' hour' }, ids: ['hour'], isOp: true },
   { txt: 'second', fn: (s) => { return s + ' second' }, ids: ['second'], isOp: true },
-  { txt: 'millisecond', fn: (s) => { return s + ' millisecond' }, ids: ['millisecond'], isOp: true },
   
-  { txt: 'DEL', fn: (s) => { return s.substring(0, s.length - 1) }, ids: ['Delete', 'Backspace'] },
   { txt: '7', fn: (s) => { return s + '7' }, ids: ['7'] },
   { txt: '8', fn: (s) => { return s + '8' }, ids: ['8'] },
   { txt: '9', fn: (s) => { return s + '9' }, ids: ['9'] },
-  { txt: '&#8730;x', fn: (s) => { return s + '^(0.5)' }, ids: ['square root'] },
   { txt: 'x<sup>n</sup>', fn: (s) => { return s + '^' }, ids: ['Dead'] },
-  { txt: 'C', fn: (s) => { return '' }, ids: ['='] },
+  { txt: 'millisecond', fn: (s) => { return s + ' millisecond' }, ids: ['millisecond'], isOp: true },
+
   { txt: '4', fn: (s) => { return s + '4' }, ids: ['4'] },
   { txt: '5', fn: (s) => { return s + '5' }, ids: ['5'] },
   { txt: '6', fn: (s) => { return s + '6' }, ids: ['6'] },
   { txt: 'x', fn: (s) => { return s + '*' }, ids: ['x'] },
   { txt: '÷', fn: (s) => { return s + '÷' }, ids: ['/'] },
 
-  { txt: '%', fn: (s) => { return s + '%' }, ids: ['%'] },
   { txt: '1', fn: (s) => { return s + '1' }, ids: ['1'] },
   { txt: '2', fn: (s) => { return s + '2' }, ids: ['2'] },
   { txt: '3', fn: (s) => { return s + '3' }, ids: ['3'] },
   { txt: '-', fn: (s) => { return s + '-' }, ids: ['-'] },
   { txt: '+', fn: (s) => { return s + '+' }, ids: ['+'] },
 
+  { txt: '0', fn: (s) => { return s + '0' }, ids: ['0'] },
   { txt: '(', fn: (s) => { return s + '(' }, ids: ['('] },
   { txt: ')', fn: (s) => { return s + ')' }, ids: [')'] },
-  { txt: '0', fn: (s) => { return s + '0' }, ids: ['0'] },
   { txt: '.', fn: (s) => { return s + '.' }, ids: ['.'] },
-  { txt: '!', fn: (s) => { return s + 'factorial(' }, ids: ['!'], isOp: true },
+  { txt: 'DEL', fn: (s) => { return s.substring(0, s.length - 1) }, ids: ['Delete', 'Backspace'] },
+
 ];

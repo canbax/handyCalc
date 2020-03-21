@@ -30,7 +30,7 @@ export class ScreenKeyboardComponent {
       this.numCol = 6;
     } else if (mode == 'date & time') {
       this.tiles = DATETIME_KEYBOARD;
-      this.numCol = 6;
+      this.numCol = 5;
     }
   }
 

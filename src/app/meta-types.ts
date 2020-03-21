@@ -9,5 +9,5 @@ export interface TrigonometricFnArg {
 export interface DateTimeChip {
   val: number;
   str: string;
-  isOp: boolean;
+  isHumanDate: boolean;
 }

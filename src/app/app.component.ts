@@ -1,4 +1,3 @@
-import { CdkTextareaAutosize } from '@angular/cdk/text-field';
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -45,7 +44,6 @@ export class AppComponent implements OnInit {
   private modelChanged: Subject<string> = new Subject<string>();
   private keyPressed: Subject<string> = new Subject<string>();
   isOpen: boolean;
-  @ViewChild('autosize', { static: false }) autosize: CdkTextareaAutosize;
 
   @ViewChild(ScreenKeyboardComponent, { static: false })
   private _screenKeyboard: ScreenKeyboardComponent;
@@ -78,6 +76,8 @@ export class AppComponent implements OnInit {
   isTimeUnitAutoCompleteOpen = false;
   @ViewChild('userDateInp', { static: false })
   private _dateAutoComplete: MatAutocompleteTrigger;
+  opChips4DateTime = ['+', '-', '*', '/', '÷', '(', ')', '^'];
+  dateUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -86,7 +86,15 @@ export class AppComponent implements OnInit {
     let fn = this.debounce(this.compute.bind(this), this.INP_CHANGE_DEBOUNCE);
     this.modelChanged.pipe(
       distinctUntilChanged())
-      .subscribe(x => { console.log('x = ', x); this.inp = x; fn(); });
+      .subscribe(x => {
+        if (this.settings.mode == 'date & time') {
+          if (x) {
+            this._usrDateInp.nativeElement.value = x;
+          }
+        }
+        this.inp = x; 
+        fn();
+      });
 
     // to prevent the glitch when you press continously, debounceTime should be greater than 500ms 
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
@@ -96,7 +104,6 @@ export class AppComponent implements OnInit {
     translate.addLangs(['en', 'tr']);
     translate.setDefaultLang(this.settings.lang);
   }
-
 
   ngOnInit() {
     setTimeout(() => this.onModeChange(), 0);
@@ -121,9 +128,16 @@ export class AppComponent implements OnInit {
     });
   }
 
+  syncInp() {
+    this.inp = this._usrDateInp.nativeElement.value;
+    if (this.inp == undefined) {
+      this.inp = '';
+    }
+  }
+
   addDate() {
     let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0] as Date;
-    this.dateChips.push({ isOp: false, str: d1.toLocaleString(), val: d1.getTime() });
+    this.dateChips.push({ isHumanDate: true, str: d1.toLocaleString(), val: d1.getTime() });
   }
 
   switchLang() {
@@ -163,11 +177,12 @@ export class AppComponent implements OnInit {
 
   compute() {
     try {
+      let str = this.inp;
       if (this.settings.mode == 'date & time') {
-        this.compute4dateTime();
+        str = this.compute4dateTime();
         return;
       }
-      let str = this.convertBrackets();
+      str = this.convertBrackets(str);
       str = this.convert4AngleUnit();
       if (this.settings.floatingPointMarker == ',') {
         str = str.replace(/,/g, '.');
@@ -190,17 +205,18 @@ export class AppComponent implements OnInit {
     }
   }
 
-  private compute4dateTime() {
-
-    console.log('compute4dateTime panelOpen ', this._dateAutoComplete.panelOpen);
-    // this._dateAutoComplete.openPanel();
-    // this.inp = this.inp.trim();
-    // if (this.inp.length > 1) {
-    //   this.dateChips.push({ isOp: false, str: this.inp, val: Number(this.inp) });
-    //   this.inp = '';
-    // }
-
-    console.log('compute4dateTime: ', this.inp);
+  private compute4dateTime(): string {
+    let s = '';
+    for (let c of this.dateChips) {
+      if (c.isHumanDate) {
+        s += c.val;
+        continue;
+      }      
+      if (c.str.includes('year')) {
+        s += c.str.replace('')
+      }
+    }
+    return s;
   }
 
   copy(txt: string) {
@@ -285,7 +301,7 @@ export class AppComponent implements OnInit {
     const input = event.input;
     const value = event.value;
 
-    this.dateChips.push({ val: Number(value), str: value, isOp: true });
+    this.dateChips.push({ val: Number(value), str: value, isHumanDate: false });
     // Reset the input value
     if (input) {
       input.value = '';
@@ -299,8 +315,9 @@ export class AppComponent implements OnInit {
   timeUnitSelected(e) {
     let s = this._usrDateInp.nativeElement.value.trim();
     let unit = e.option.viewValue;
-    this.dateChips.push({ isOp: false, str: s + unit, val: Number(s) });
+    this.dateChips.push({ isHumanDate: false, str: s + unit, val: Number(s) });
     this._usrDateInp.nativeElement.value = '';
+    this.inp = '';
   }
 
   private refreshSideNav() {
@@ -370,8 +387,7 @@ export class AppComponent implements OnInit {
     return items;
   }
 
-  private convertBrackets(): string {
-    let str = this.inp;
+  private convertBrackets(str): string {
     str = str.replace(/{/g, '(');
     str = str.replace(/}/g, ')');
     str = str.replace(/\[/g, '(');
