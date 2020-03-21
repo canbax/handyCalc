@@ -125,7 +125,10 @@ export class AppComponent implements OnInit {
     setInterval(this.keepHistory.bind(this), this.PUSH_HISTORY_MS);
 
     flatpickr('#date-inp', {
-      defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true,
+      defaultDate: new Date(), enableTime: true, enableSeconds: true, time_24hr: true, onClose: () => {
+        let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0] as Date;
+        this.dateChips.push({ isHumanDate: true, str: d1.toLocaleString(), val: d1.getTime() });
+      }
     });
   }
 
@@ -134,11 +137,6 @@ export class AppComponent implements OnInit {
     if (this.inp == undefined) {
       this.inp = '';
     }
-  }
-
-  addDate() {
-    let d1 = document.querySelector('#date-inp')['_flatpickr'].selectedDates[0] as Date;
-    this.dateChips.push({ isHumanDate: true, str: d1.toLocaleString(), val: d1.getTime() });
   }
 
   switchLang() {

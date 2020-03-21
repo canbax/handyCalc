@@ -1,4 +1,4 @@
-<mat-sidenav-container>
+<mat-sidenav-container class="main-container">
   <mat-sidenav mode="side" #sidenav [(opened)]="isOpen" (disableClose)="true">
     <mat-accordion>
       <mat-expansion-panel [expanded]="true">
@@ -116,7 +116,7 @@
     <div class="m-5">
 
       <div [hidden]="settings.mode != 'date & time'">
-        <mat-form-field class="editor">
+        <mat-form-field class="editor" appearance="outline">
           <mat-chip-list #chipList>
             <mat-chip *ngFor="let d of dateChips; let i = index" [removable]="true" (removed)="remove(i)">
               {{d.str}}
