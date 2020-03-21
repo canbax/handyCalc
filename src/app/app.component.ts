@@ -1,7 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit } from '@angular/core';
 import { distinctUntilChanged } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { evaluate } from 'mathjs'
+import { evaluate, format } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
@@ -202,10 +202,18 @@ export class AppComponent implements OnInit {
       const t = typeof this.results[1];
       if (t == 'function' || t == 'undefined') {
         this.results[1] = '';
-      } else if (t == 'number' && !Number.isInteger(this.results[1])) {
+      }
+      if (t == 'number' && !Number.isInteger(this.results[1])) {
         this.results[1] = this.results[1].toFixed(this.settings.selectedFloatingPointPrecision);
       }
-      this.results[1] = (this.results[1] + '').substr(0, this.settings.numDigit4Results);
+
+      this.results[1] = format(this.results[1],
+        {
+          notation: 'auto', upperExp: this.settings.numDigit4Results,
+          lowerExp: -this.settings.numDigit4Results
+        });
+      this.results[1] = this.results[1].replace(new RegExp('"|\'', 'g'), '')
+      // this.results[1] = (this.results[1]+ '').substr(0, this.settings.numDigit4Results);
       if (this.settings.mode == 'date & time') {
         this.results[1] = this.getResult4DateTime(this.results[1]);
       }
