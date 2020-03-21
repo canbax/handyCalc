@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter, Input, ViewChild, ElementRef } from '@angular/core';
 import { CalcBtn } from './CalcBtn';
 import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD, DATETIME_KEYBOARD } from './keyboards';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-screen-keyboard',
@@ -14,7 +15,7 @@ export class ScreenKeyboardComponent {
   tiles: CalcBtn[];
   numCol: number = 5;
 
-  constructor() {
+  constructor(private _translate: TranslateService) {
     this.tiles = STD_KEYBOARD;
   }
 
@@ -31,6 +32,15 @@ export class ScreenKeyboardComponent {
     } else if (mode == 'date & time') {
       this.tiles = DATETIME_KEYBOARD;
       this.numCol = 5;
+      // set timeunit translations
+      this._translate.get('timeUnits').subscribe(x => {
+        for (let t of this.tiles) {
+          if (x[t.txt]) {
+            t.txt = x[t.txt];
+            t.fn = (s) => { return s + ' ' + x[t.txt] };
+          }
+        }
+      });
     }
   }
 

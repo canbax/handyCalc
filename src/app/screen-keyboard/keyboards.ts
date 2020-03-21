@@ -122,7 +122,7 @@ export const DATETIME_KEYBOARD: CalcBtn[] = [
   { txt: '8', fn: (s) => { return s + '8' }, ids: ['8'] },
   { txt: '9', fn: (s) => { return s + '9' }, ids: ['9'] },
   { txt: 'x<sup>n</sup>', fn: (s) => { return s + '^' }, ids: ['Dead'] },
-  { txt: 'millisecond', fn: (s) => { return s + ' millisecond' }, ids: ['millisecond'], isOp: true },
+  { txt: 'ms', fn: (s) => { return s + ' ms' }, ids: ['millisecond'], isOp: true },
 
   { txt: '4', fn: (s) => { return s + '4' }, ids: ['4'] },
   { txt: '5', fn: (s) => { return s + '5' }, ids: ['5'] },
