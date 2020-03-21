@@ -213,7 +213,7 @@ export class AppComponent implements OnInit {
         continue;
       }      
       if (c.str.includes('year')) {
-        s += c.str.replace('')
+        // s += c.str.replace('')
       }
     }
     return s;
