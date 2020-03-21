@@ -5,7 +5,7 @@ import { evaluate } from 'mathjs'
 import { ClipboardService } from 'ngx-clipboard'
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
-import { TrigonometricFnArg, DateTimeChip } from './meta-types';
+import { TrigonometricFnArg, DateTimeChip, TIME_UNITS, getPrettyTime, TIME_UNIT_STR } from './meta-types';
 import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-keyboard/keyboards';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
   @ViewChild('userDateInp', { static: false })
   private _dateAutoComplete: MatAutocompleteTrigger;
   opChips4DateTime = ['+', '-', '*', '/', '÷', '(', ')', '^'];
-  dateUnits = ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond'];
+  dateUnits = [];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
             this._usrDateInp.nativeElement.value = x;
           }
         }
-        this.inp = x; 
+        this.inp = x;
         fn();
       });
 
@@ -103,6 +103,7 @@ export class AppComponent implements OnInit {
     this.onCssThemeChange();
     translate.addLangs(['en', 'tr']);
     translate.setDefaultLang(this.settings.lang);
+    this.dateUnits = Object.keys(TIME_UNIT_STR[this.settings.lang]);
   }
 
   ngOnInit() {
@@ -180,10 +181,9 @@ export class AppComponent implements OnInit {
       let str = this.inp;
       if (this.settings.mode == 'date & time') {
         str = this.compute4dateTime();
-        return;
       }
       str = this.convertBrackets(str);
-      str = this.convert4AngleUnit();
+      str = this.convert4AngleUnit(str);
       if (this.settings.floatingPointMarker == ',') {
         str = str.replace(/,/g, '.');
       } else if (this.settings.isIgnoreComma) {
@@ -198,6 +198,9 @@ export class AppComponent implements OnInit {
         this.results[1] = this.results[1].toFixed(this.settings.selectedFloatingPointPrecision);
       }
       this.results[1] = (this.results[1] + '').substr(0, this.settings.numDigit4Results);
+      if (this.settings.mode == 'date & time') {
+        this.results[1] = this.getResult4DateTime(this.results[1]);
+      }
       this.calculateResultsOnOtherBases();
     } catch (e) {
       this.results = ['', '', '', ''];
@@ -210,12 +213,14 @@ export class AppComponent implements OnInit {
     for (let c of this.dateChips) {
       if (c.isHumanDate) {
         s += c.val;
-        continue;
-      }      
-      if (c.str.includes('year')) {
-        // s += c.str.replace('')
+      } else {
+        s += c.str;
       }
     }
+    for (let u in TIME_UNITS) {
+      s = s.replace(new RegExp(u, 'g'), '*' + TIME_UNITS[u]);
+    }
+    console.log('compute4dateTime:', s);
     return s;
   }
 
@@ -306,10 +311,12 @@ export class AppComponent implements OnInit {
     if (input) {
       input.value = '';
     }
+    this.compute();
   }
 
   remove(index: number): void {
     this.dateChips.splice(index, 1);
+    this.compute();
   }
 
   timeUnitSelected(e) {
@@ -318,6 +325,24 @@ export class AppComponent implements OnInit {
     this.dateChips.push({ isHumanDate: false, str: s + unit, val: Number(s) });
     this._usrDateInp.nativeElement.value = '';
     this.inp = '';
+    this.compute();
+  }
+
+  private getResult4DateTime(result: string): string {
+    let s = '';
+    let hasHumanDate = false;
+    for (let c of this.dateChips) {
+      if (c.isHumanDate) {
+        hasHumanDate = true;
+      }
+    }
+    if (hasHumanDate) {
+      return new Date(Number(result)).toLocaleString();
+    } else {
+      return getPrettyTime(Number(result));
+    }
+
+    return s;
   }
 
   private refreshSideNav() {
@@ -355,8 +380,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  private convert4AngleUnit() {
-    let r = this.inp;
+  private convert4AngleUnit(r: string) {
     this.isTrigonometric = false;
     let items = this.getTrigonometricFnArgs(r);
     this.isTrigonometric = items.length > 0;

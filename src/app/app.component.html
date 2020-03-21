@@ -118,8 +118,7 @@
       <div [hidden]="settings.mode != 'date & time'">
         <mat-form-field class="editor">
           <mat-chip-list #chipList>
-            <mat-chip *ngFor="let d of dateChips; let i = index" [color]="d.isOp ? '' : 'primary'" [removable]="true"
-              (removed)="remove(i)">
+            <mat-chip *ngFor="let d of dateChips; let i = index" [removable]="true" (removed)="remove(i)">
               {{d.str}}
               <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
@@ -133,9 +132,6 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-        <input type="text" id="date-inp">
-        <button (click)="addDate()">add date</button>
-
 
       </div>
       <div>
@@ -146,6 +142,11 @@
             (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10">
             </textarea>
         </mat-form-field>
+        <span [hidden]="settings.mode != 'date & time'">
+          <button mat-icon-button id="date-inp">
+            <mat-icon>date_range</mat-icon>
+          </button>
+        </span>
         <button mat-icon-button matSuffix (click)="copy(inp)">
           <mat-icon>file_copy</mat-icon>
         </button>

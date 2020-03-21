@@ -10,14 +10,5 @@
   "Use for floating-point numbers": "Use for floating-point numbers",
   "Info": "Info",
   "Style": "Style",
-  "Functions": "Functions",
-  "TimeUnits": {
-    "year": "year",
-    "month": "month",
-    "day": "day",
-    "hour": "hour",
-    "minute": "minute",
-    "second": "seccond",
-    "millisecond": "millisecond"
-  }
+  "Functions": "Functions"
 }
