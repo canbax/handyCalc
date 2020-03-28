@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1585426720750,
+  "timestamp": 1585426901542,
   "index": "/handyCalc/index.html",
   "assetGroups": [
     {
@@ -10,8 +10,8 @@
       "urls": [
         "/handyCalc/favicon.ico",
         "/handyCalc/index.html",
-        "/handyCalc/main-es2015.2b6606159be43cb94482.js",
-        "/handyCalc/main-es5.2b6606159be43cb94482.js",
+        "/handyCalc/main-es2015.733c9176aa58f965d4a6.js",
+        "/handyCalc/main-es5.733c9176aa58f965d4a6.js",
         "/handyCalc/manifest.webmanifest",
         "/handyCalc/polyfills-es2015.28b264071c0a6503d0b4.js",
         "/handyCalc/polyfills-es5.4b8148a3acab94b58774.js",
@@ -61,9 +61,9 @@
     "/handyCalc/assets/prebuilt-themes/pink-bluegrey.css": "c0ea7d6ea6b138cb897c87b6f646e0c92e6bac58",
     "/handyCalc/assets/prebuilt-themes/purple-green.css": "491d81c46d71d9d9f516ae2241f87fc7d175b3eb",
     "/handyCalc/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/handyCalc/index.html": "0ce6cbea70bcef620ea835d6d65a8ab725ce8361",
-    "/handyCalc/main-es2015.2b6606159be43cb94482.js": "e4f2b0d3da20b4922006193988d78ae938344c1a",
-    "/handyCalc/main-es5.2b6606159be43cb94482.js": "e612a2b69eea8d991782982492f8ccaa7311b2fb",
+    "/handyCalc/index.html": "365bfafbe14326f466323092525c80ee9a44af98",
+    "/handyCalc/main-es2015.733c9176aa58f965d4a6.js": "5c30f9f3e6719e89c96d6208a119bdb850d546f3",
+    "/handyCalc/main-es5.733c9176aa58f965d4a6.js": "0c047c99a2fcbed81f03a1c5c3c3780b8641a88a",
     "/handyCalc/manifest.webmanifest": "2f37df504a88a258e4dc021aa73e58ba9eb4020c",
     "/handyCalc/polyfills-es2015.28b264071c0a6503d0b4.js": "72ad4ccc0a3916ae4598199447cdeadd6d380570",
     "/handyCalc/polyfills-es5.4b8148a3acab94b58774.js": "e51a1de4f016cd689dbdbef51043dec9518c4111",
