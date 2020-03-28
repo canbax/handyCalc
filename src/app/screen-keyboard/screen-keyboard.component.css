@@ -7,14 +7,6 @@ mat-grid-list {
   height: 50vh;
 }
 
-.down-btn {
-    background-color: #d2d2d2;
-}
-
-.container {
-    border: 2px solid red;
-}
-
 div {
   font-size: large;
 }

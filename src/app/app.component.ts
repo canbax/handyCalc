@@ -79,6 +79,8 @@ export class AppComponent implements OnInit {
   opChips4DateTime = ['+', '-', '*', '/', '÷', '(', ')', '^'];
   dateUnits = [];
   isDateSelected = false;
+  currBtnPressColor: string = '';
+  cssTheme2BtnPressColor: string[] = ['#E0E0E0', '#E0E0E0', '#5C5C5C', '#5C5C5C'];
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -300,6 +302,8 @@ export class AppComponent implements OnInit {
     // assets/prebuilt-themes/
     document.getElementById('theme-asset')['href'] = this.settings.path2CssTheme;
     this._usrSetting.setSetting('path2CssTheme', this.settings.path2CssTheme);
+    let i = this.cssThemes.findIndex(x => x.path == this.settings.path2CssTheme);
+    this.currBtnPressColor = this.cssTheme2BtnPressColor[i];
   }
 
   addChip(event: MatChipInputEvent): void {

@@ -109,7 +109,7 @@
         <mat-icon>menu</mat-icon>
       </button>
       <span class="header-txt">
-        <a href="https://github.com/canbax/handyCalc" target="_blank"> Handy Calculator (0.0 beta)</a>
+        <a href="https://github.com/canbax/handyCalc" target="_blank" mat-button> Handy Calculator (0.0 beta)</a>
       </span>
     </div>
 
@@ -190,7 +190,7 @@
         </div>
       </mat-action-list>
     </mat-card>
-    <app-screen-keyboard class="m-5" [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)">
+    <app-screen-keyboard class="m-5" [currInp]="inp" (screenKeyClicked)="onScreenKeyClicked($event)" [virtualPressColorInp]="currBtnPressColor">
     </app-screen-keyboard>
 
   </mat-sidenav-content>

@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class ScreenKeyboardComponent {
   @Input() currInp: string;
+  @Input() virtualPressColorInp: string;
   @Output() screenKeyClicked = new EventEmitter<string>();
   @ViewChild('mainDiv', { static: false }) myDiv: ElementRef<HTMLElement>;
   tiles: CalcBtn[];
