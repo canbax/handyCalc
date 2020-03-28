@@ -42,10 +42,6 @@ app-screen-keyboard {
   height: 60vh;
 }
 
-.header-txt {
-  font-size: small;
-}
-
 .result-txt {
   font-size: x-large;
   align-items: baseline;
