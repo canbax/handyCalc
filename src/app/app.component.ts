@@ -17,11 +17,30 @@ import { TranslateService } from '@ngx-translate/core';
 import flatpickr from 'flatpickr';
 import { ENTER } from '@angular/cdk/keycodes';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { trigger, style, animate, transition } from '@angular/animations';
+import { MatRipple } from '@angular/material/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
+  animations: [
+    trigger(
+      'enterAnimation', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('500ms', style({ opacity: 1 }))
+        // animate('1s')
+
+      ]),
+      transition(':leave', [
+        style({ opacity: 1 }),
+        animate('500ms', style({ opacity: 0 }))
+        // animate('1s')
+      ])
+    ]
+    )
+  ],
 })
 export class AppComponent implements OnInit {
 
@@ -81,6 +100,8 @@ export class AppComponent implements OnInit {
   isDateSelected = false;
   currBtnPressColor: string = '';
   cssTheme2BtnPressColor: string[] = ['#E0E0E0', '#E0E0E0', '#5C5C5C', '#5C5C5C'];
+  /** Reference to the directive instance of the ripple. */
+  @ViewChild(MatRipple) ripple: MatRipple;
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -101,7 +122,11 @@ export class AppComponent implements OnInit {
 
     // to prevent the glitch when you press continously, debounceTime should be greater than 500ms 
     // some keyup events are NOT catched, for example (^). Subscribe to call keyup for every keydown
-    this.keyPressed.subscribe(x => setTimeout(() => { this._screenKeyboard.simulateKeyPress(false, x) }, this.KEY_UP_DEBOUNCE));
+    this.keyPressed.subscribe(x => setTimeout(() => {
+      if (this._screenKeyboard) {
+        this._screenKeyboard.simulateKeyPress(false, x)
+      }
+    }, this.KEY_UP_DEBOUNCE));
     this.isOpen = false;
     this.onCssThemeChange();
     translate.addLangs(['en', 'tr']);
@@ -152,7 +177,9 @@ export class AppComponent implements OnInit {
     this.translate.use(this.settings.lang).subscribe(() => {
       this._usrSetting.setSetting('lang', this.settings.lang);
       this.dateUnits = Object.values(TIME_UNIT_STR[this.settings.lang]);
-      this._screenKeyboard.setKeyboard(this.settings.mode);
+      if (this._screenKeyboard) {
+        this._screenKeyboard.setKeyboard(this.settings.mode);
+      }
       this.refreshSideNav();
     });
   }
@@ -171,7 +198,9 @@ export class AppComponent implements OnInit {
   }
 
   onModeChange() {
-    this._screenKeyboard.setKeyboard(this.settings.mode);
+    if (this._screenKeyboard) {
+      this._screenKeyboard.setKeyboard(this.settings.mode);
+    }
     this.calculateResultsOnOtherBases();
     if (this.settings.mode == 'programmer') {
       this.bases = ['HEX', 'DEC', 'OCT', 'BIN'];
@@ -220,6 +249,7 @@ export class AppComponent implements OnInit {
         this.results[1] = this.getResult4DateTime(this.results[1]);
       }
       this.calculateResultsOnOtherBases();
+      this.launchRipple();
     } catch (e) {
       this.results = ['', '', '', ''];
       console.log('e: ', e);
@@ -245,14 +275,18 @@ export class AppComponent implements OnInit {
       return;
     }
     this.keyPressed.next(e.key);
-    this._screenKeyboard.simulateKeyPress(true, e.key);
+    if (this._screenKeyboard) {
+      this._screenKeyboard.simulateKeyPress(true, e.key);
+    }
   }
 
   onKeyUp(e: KeyboardEvent) {
     if (e.ctrlKey || e.altKey || e.key == 'Control') {
       return;
     }
-    this._screenKeyboard.simulateKeyPress(false, e.key);
+    if (this._screenKeyboard) {
+      this._screenKeyboard.simulateKeyPress(false, e.key);
+    }
   }
 
   loadFromHistory(o: string) {
@@ -324,6 +358,16 @@ export class AppComponent implements OnInit {
     this.processInp4chips();
     this.dateChips.push({ isHumanDate: false, str: s + unit, val: Number(s) });
     this.compute();
+  }
+
+  private launchRipple() {
+    const rippleRef = this.ripple.launch({
+      persistent: true,
+      centered: true
+    });
+
+    // Fade out the ripple later.
+    rippleRef.fadeOut();
   }
 
   private processInp4chips() {

@@ -44,7 +44,7 @@ app-screen-keyboard {
 
 .result-txt {
   font-size: x-large;
-  align-items: baseline;
+  padding: 15px;
 }
 
 .result-base {

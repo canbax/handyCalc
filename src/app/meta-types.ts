@@ -20,7 +20,7 @@ export const TIME_UNIT_STR = {
     "hour": "hour",
     "minute": "minute",
     "second": "second",
-    "ms": "millisecond"
+    "ms": "ms"
   },
   tr: {
     "year": "yıl",
@@ -29,7 +29,7 @@ export const TIME_UNIT_STR = {
     "hour": "saat",
     "minute": "dakika",
     "second": "saniye",
-    "ms": "milisaniye"
+    "ms": "ms"
   }
 }
 
