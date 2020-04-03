@@ -159,7 +159,7 @@
             <mat-radio-group [(ngModel)]="base" (change)="compute()">
               <mat-radio-button *ngFor="let b of bases; let i = index" [value]="b">
                 <span class="result-base"> {{b}} &nbsp;&nbsp;</span>
-                <span matRipple [matRippleTrigger]="trigger" class="result-txt">{{results[i]}}</span>
+                <span matRipple [matRippleTrigger]="resultRipple1" #resultRipple1 class="result-txt">{{results[i]}}</span>
                 <button *ngIf="results[i].length > 0" mat-icon-button matSuffix (click)="copy(results[i])">
                   <mat-icon>file_copy</mat-icon>
                 </button>
@@ -167,7 +167,7 @@
             </mat-radio-group>
           </div>
           <div *ngIf="settings.mode != 'programmer'">
-            <span matRipple [matRippleTrigger]="trigger" class="result-txt">{{results[1]}}</span>
+            <span matRipple [matRippleTrigger]="resultRipple2" #resultRipple2 class="result-txt">{{results[1]}}</span>
             <button *ngIf="results[1].length > 0" mat-icon-button matSuffix (click)="copy(results[1])">
               <mat-icon>file_copy</mat-icon>
             </button>
