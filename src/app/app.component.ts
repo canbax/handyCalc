@@ -93,8 +93,6 @@ export class AppComponent implements OnInit {
   dateChips: DateTimeChip[] = [];
   readonly separatorKeysCodes: number[] = [ENTER];
   isTimeUnitAutoCompleteOpen = false;
-  @ViewChild('userDateInp', { static: false })
-  private _dateAutoComplete: MatAutocompleteTrigger;
   opChips4DateTime = ['+', '-', '*', '/', '÷', '(', ')', '^'];
   dateUnits = [];
   isDateSelected = false;

@@ -16,7 +16,7 @@ export interface UserSetting {
 export class UserSettingService {
   private settings: UserSetting = {
     mode: 'extended', floatingPointMarker: '.', isIgnoreComma: true, lang: 'tr',
-    numDigit4Results: 6, selectedFloatingPointPrecision: 2, path2CssTheme: 'assets/prebuilt-themes/indigo-pink.css'
+    numDigit4Results: 10, selectedFloatingPointPrecision: 2, path2CssTheme: 'assets/prebuilt-themes/indigo-pink.css'
   };
 
   constructor() {
