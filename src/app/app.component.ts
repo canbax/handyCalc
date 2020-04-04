@@ -100,6 +100,7 @@ export class AppComponent implements OnInit {
   cssTheme2BtnPressColor: string[] = ['#E0E0E0', '#E0E0E0', '#5C5C5C', '#5C5C5C'];
   @ViewChild(MatRipple) ripple: MatRipple;
   usrHint = '';
+  isAnimateTitle = true;
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -163,6 +164,8 @@ export class AppComponent implements OnInit {
         }
       }, onChange: () => { this.isDateSelected = true; }
     });
+    this.setHtmlTitle();
+    setTimeout(() => { this.isAnimateTitle = false }, 3000);
   }
 
   syncInp() {
@@ -181,13 +184,16 @@ export class AppComponent implements OnInit {
       }
       this.refreshSideNav();
     });
+    this.setHtmlTitle();
   }
 
   fnSelected(e: MatAutocompleteSelectedEvent) {
     let s = e.option.value as string;
     this.link2fn = 'https://mathjs.org/docs/reference/functions/' + s.substr(0, s.indexOf('(')) + '.html'
     s = s.substr(0, s.indexOf('(') + 1);
-    this.inp = this.inp + s;
+    this.inp = this.inp + s + ')';
+    this.setCursor2SecondLast();
+    this._userInp.nativeElement.focus();
     let group = e.option.group.label;
     let val = e.option.value;
 
@@ -367,17 +373,28 @@ export class AppComponent implements OnInit {
     this.compute();
   }
 
+  private setHtmlTitle() {
+    let e = document.getElementsByTagName('title')[0];
+    this.translate.get('appTitle').subscribe(x => {
+      e.text = x;
+    });
+  }
+
   private handleOpSingleParanthesis() {
     let currOps = this._screenKeyboard.tiles.filter(x => x.isOp);
     for (let i = 0; i < currOps.length; i++) {
       if (this.inp.trim().endsWith(currOps[i].fn(''))) {
         this.inp += ')';
-        setTimeout(() => {
-          this._userInp.nativeElement.selectionStart = this.inp.length - 1;
-          this._userInp.nativeElement.selectionEnd = this.inp.length - 1;
-        }, 0);
+        this.setCursor2SecondLast();
       }
     }
+  }
+
+  private setCursor2SecondLast() {
+    setTimeout(() => {
+      this._userInp.nativeElement.selectionStart = this.inp.length - 1;
+      this._userInp.nativeElement.selectionEnd = this.inp.length - 1;
+    }, 0);
   }
 
   private launchRipple() {

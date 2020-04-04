@@ -34,10 +34,6 @@ mat-radio-button {
   padding: 7px;
 }
 
-.header {
-  height: 10vh;
-}
-
 app-screen-keyboard {
   height: 60vh;
 }
@@ -74,8 +70,36 @@ mat-sidenav {
   outline: none;
 }
 
-.centered-div{
+.centered-div {
   margin-right: auto;
   margin-left: auto;
   display: table;
+}
+
+.app-title {
+  font-size: small;
+}
+
+.inf-shine-txt {
+  animation-iteration-count: 1;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(90deg, #000, #fff, #000);
+  background-repeat: no-repeat;
+  background-size: 80%;
+  animation: shineText 3s linear;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0);
+}
+
+
+@keyframes shineText {
+  0% {
+    background-position: -500%;
+  }
+
+  100% {
+    background-position: 500%;
+  }
 }

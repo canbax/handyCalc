@@ -11,6 +11,9 @@
   "Info": "Info",
   "Style": "Style",
   "Functions": "Functions",
+  "About": "About",
+  "AboutTxt": "Hasap is free, ad-free and open-source math calculator.",
+  "MoreAbout": "More info",
   "timeUnits": {
     "year": "year",
     "month": "month",
@@ -21,5 +24,6 @@
     "ms": "millisecond"
   },
   "inpExpo": "Written expressions will be calculated automatically",
-  "mathParseError": "Expressions couldn't understood"
+  "mathParseError": "Expressions couldn't understood",
+  "appTitle": "Hasap: Math Calculator"
 }

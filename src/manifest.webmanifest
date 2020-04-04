@@ -1,6 +1,6 @@
 {
-  "name": "handyCalc",
-  "short_name": "handyCalc",
+  "name": "Hasap: Math Calculator",
+  "short_name": "Hasap",
   "theme_color": "#1976d2",
   "background_color": "#fafafa",
   "display": "standalone",
