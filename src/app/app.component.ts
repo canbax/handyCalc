@@ -7,7 +7,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ScreenKeyboardComponent } from './screen-keyboard/screen-keyboard.component';
 import { TrigonometricFnArg, DateTimeChip, TIME_UNITS, getPrettyTime, TIME_UNIT_STR } from './meta-types';
 import { STD_KEYBOARD, EXTENDED_KEYBOARD, PROGRAMMER_KEYBOARD } from './screen-keyboard/keyboards';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { startWith, map } from 'rxjs/operators';
 import { MathFnGroup, _filter, fnGroups, fnGroupExpo } from './math-fn';
@@ -100,6 +100,7 @@ export class AppComponent implements OnInit {
   cssTheme2BtnPressColor: string[] = ['#E0E0E0', '#E0E0E0', '#5C5C5C', '#5C5C5C'];
   /** Reference to the directive instance of the ripple. */
   @ViewChild(MatRipple) ripple: MatRipple;
+  inpFormCtrl = new FormControl();
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -115,6 +116,7 @@ export class AppComponent implements OnInit {
           }
         }
         this.inp = x;
+        this.handleOpSingleParanthesis();
         fn();
       });
 
@@ -162,6 +164,7 @@ export class AppComponent implements OnInit {
         }
       }, onChange: () => { this.isDateSelected = true; }
     });
+    this.inpFormCtrl.setErrors({ invalidExpr: true });
   }
 
   syncInp() {
@@ -202,6 +205,8 @@ export class AppComponent implements OnInit {
     this.calculateResultsOnOtherBases();
     if (this.settings.mode == 'programmer') {
       this.bases = ['HEX', 'DEC', 'OCT', 'BIN'];
+      this.settings.isIgnoreComma = false;
+      this.settings.floatingPointMarker = '.';
     } else {
       this.bases = [];
     }
@@ -221,10 +226,12 @@ export class AppComponent implements OnInit {
       }
       str = this.convertBrackets(str);
       str = this.convert4AngleUnit(str);
-      if (this.settings.floatingPointMarker == ',') {
-        str = str.replace(/,/g, '.');
-      } else if (this.settings.isIgnoreComma) {
-        str = str.replace(/,/g, '');
+      if (this.settings.mode != 'programmer') {
+        if (this.settings.floatingPointMarker == ',') {
+          str = str.replace(/,/g, '.');
+        } else if (this.settings.isIgnoreComma) {
+          str = str.replace(/,/g, '');
+        }
       }
       str = this.convertBase2Dec(str);
       this.results[1] = evaluate(str);
@@ -356,6 +363,19 @@ export class AppComponent implements OnInit {
     this.processInp4chips();
     this.dateChips.push({ isHumanDate: false, str: s + unit, val: Number(s) });
     this.compute();
+  }
+
+  private handleOpSingleParanthesis() {
+    let currOps = this._screenKeyboard.tiles.filter(x => x.isOp);
+    for (let i = 0; i < currOps.length; i++) {
+      if (this.inp.trim().endsWith(currOps[i].fn(''))) {
+        this.inp += ')';
+        setTimeout(() => {
+          this._userInp.nativeElement.selectionStart = this.inp.length - 1;
+          this._userInp.nativeElement.selectionEnd = this.inp.length - 1;
+        }, 0);
+      }
+    }
   }
 
   private launchRipple() {

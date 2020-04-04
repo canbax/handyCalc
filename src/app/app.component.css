@@ -27,7 +27,7 @@ mat-radio-button {
 }
 
 .editor {
-  width: 85%;
+  width: 100%;
 }
 
 .container {
@@ -55,10 +55,6 @@ app-screen-keyboard {
   size: 3;
 }
 
-.m-5 {
-  margin: 5px;
-}
-
 mat-sidenav {
   max-width: 50vw;
 }
@@ -76,4 +72,10 @@ mat-sidenav {
 
 .mat-standard-chip:focus {
   outline: none;
+}
+
+.centered-div{
+  margin-right: auto;
+  margin-left: auto;
+  display: table;
 }

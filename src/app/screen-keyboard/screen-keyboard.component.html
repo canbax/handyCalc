@@ -1,4 +1,5 @@
-<mat-card #mainDiv>
+
+<mat-card #mainDiv class="m-5">
   <mat-grid-list [cols]="numCol" rowHeight="fit">
     <mat-grid-tile *ngFor="let t of tiles">
       <button mat-button (click)="tileClicked(t)" [style.background-color]="t.isPressed ? virtualPressColorInp : ''">

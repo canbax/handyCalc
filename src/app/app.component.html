@@ -49,7 +49,7 @@
             </mat-form-field>
           </div>
           <div class="form-part">
-            <mat-checkbox [disabled]="settings.floatingPointMarker == ','" [(checked)]="settings.isIgnoreComma"
+            <mat-checkbox [disabled]="settings.floatingPointMarker == ',' || settings.mode == 'programmer' " [(checked)]="settings.isIgnoreComma"
               (change)="isIgnoreCommaChanged()">
               {{'Ignore commas'|translate}}
             </mat-checkbox>
@@ -57,7 +57,7 @@
           <div class="form-part">
             <div>{{'Use for floating-point numbers'|translate}}</div>
             <mat-radio-group [(ngModel)]="settings.floatingPointMarker" class="degree-radio"
-              (change)="floatMarkerChanged()">
+              (change)="floatMarkerChanged()" [disabled]="settings.mode == 'programmer'">
               <mat-radio-button value=".">.</mat-radio-button>
               <mat-radio-button value=",">,</mat-radio-button>
             </mat-radio-group>
@@ -133,33 +133,39 @@
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
-
       </div>
       <div>
         <mat-form-field *ngIf="settings.mode != 'date & time'" [style.fontSize]="16" class="editor"
           appearance="outline">
           <textarea #userInp (keydown)="onKeyDown($event)" (keyup)="onKeyUp($event)" autofocus matInput
             cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" [ngModel]='inp'
-            (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10">
-            </textarea>
+            (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10" [placeholder]="'inpExpo'|translate">
+          </textarea>
+          <!-- buttons which are inline with input -->
+          <span matSuffix>
+            <span [hidden]="settings.mode != 'date & time'">
+              <button style="display: inline;" mat-button mat-icon-button id="date-inp">
+                <mat-icon>date_range</mat-icon>
+              </button>
+            </span>
+            <button style="display: inline;" mat-button mat-icon-button (click)="copy(inp)">
+              <mat-icon>file_copy</mat-icon>
+            </button>
+            <button style="display: inline;" mat-button mat-icon-button (click)="isShowHistory=!isShowHistory;">
+              <mat-icon>history</mat-icon>
+            </button>
+          </span>
+          <mat-error *ngIf="inpFormCtrl.hasError('invalidExpr')">
+            Please enter a valid email address
+          </mat-error>
         </mat-form-field>
-        <span [hidden]="settings.mode != 'date & time'">
-          <button mat-icon-button id="date-inp">
-            <mat-icon>date_range</mat-icon>
-          </button>
-        </span>
-        <button mat-icon-button matSuffix (click)="copy(inp)">
-          <mat-icon>file_copy</mat-icon>
-        </button>
-        <button mat-icon-button matSuffix (click)="isShowHistory=!isShowHistory;">
-          <mat-icon>history</mat-icon>
-        </button>
-        <div>
+        <div class="centered-div">
           <div *ngIf="settings.mode == 'programmer'">
-            <mat-radio-group [(ngModel)]="base" (change)="compute()">
+            <mat-radio-group [(ngModel)]="base" (change)="compute()" matRipple [matRippleTrigger]="resultRipple1"
+              #resultRipple1>
               <mat-radio-button *ngFor="let b of bases; let i = index" [value]="b">
                 <span class="result-base"> {{b}} &nbsp;&nbsp;</span>
-                <span matRipple [matRippleTrigger]="resultRipple1" #resultRipple1 class="result-txt">{{results[i]}}</span>
+                <span class="result-txt">{{results[i]}}</span>
                 <button *ngIf="results[i].length > 0" mat-icon-button matSuffix (click)="copy(results[i])">
                   <mat-icon>file_copy</mat-icon>
                 </button>

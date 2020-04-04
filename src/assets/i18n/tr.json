@@ -19,5 +19,6 @@
     "minute": "dakika",
     "second": "saniye",
     "ms": "milisaniye"
-  }
+  },
+  "inpExpo": "Yazılan ifadeler otomatik olarak hesaplanır"
 }
