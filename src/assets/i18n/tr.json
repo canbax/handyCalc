@@ -20,5 +20,6 @@
     "second": "saniye",
     "ms": "milisaniye"
   },
-  "inpExpo": "Yazılan ifadeler otomatik olarak hesaplanır"
+  "inpExpo": "Yazılan ifadeler otomatik olarak hesaplanır",
+  "mathParseError": "İfadeler anlaşılamadı"
 }

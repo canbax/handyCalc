@@ -98,9 +98,8 @@ export class AppComponent implements OnInit {
   isDateSelected = false;
   currBtnPressColor: string = '';
   cssTheme2BtnPressColor: string[] = ['#E0E0E0', '#E0E0E0', '#5C5C5C', '#5C5C5C'];
-  /** Reference to the directive instance of the ripple. */
   @ViewChild(MatRipple) ripple: MatRipple;
-  inpFormCtrl = new FormControl();
+  usrHint = '';
 
   constructor(private _clipboardService: ClipboardService, private _snackBar: MatSnackBar, private _formBuilder: FormBuilder,
     private _usrSetting: UserSettingService, public translate: TranslateService) {
@@ -164,7 +163,6 @@ export class AppComponent implements OnInit {
         }
       }, onChange: () => { this.isDateSelected = true; }
     });
-    this.inpFormCtrl.setErrors({ invalidExpr: true });
   }
 
   syncInp() {
@@ -220,6 +218,7 @@ export class AppComponent implements OnInit {
 
   compute() {
     try {
+      this.usrHint = '';
       let str = this.inp;
       if (this.settings.mode == 'date & time') {
         str = this.compute4dateTime();
@@ -256,6 +255,9 @@ export class AppComponent implements OnInit {
       this.calculateResultsOnOtherBases();
       this.launchRipple();
     } catch (e) {
+      this.translate.get('mathParseError').subscribe(x => {
+        this.usrHint = x;
+      })
       this.results = ['', '', '', ''];
       console.log('e: ', e);
     }

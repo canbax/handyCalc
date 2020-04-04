@@ -49,8 +49,8 @@
             </mat-form-field>
           </div>
           <div class="form-part">
-            <mat-checkbox [disabled]="settings.floatingPointMarker == ',' || settings.mode == 'programmer' " [(checked)]="settings.isIgnoreComma"
-              (change)="isIgnoreCommaChanged()">
+            <mat-checkbox [disabled]="settings.floatingPointMarker == ',' || settings.mode == 'programmer' "
+              [(checked)]="settings.isIgnoreComma" (change)="isIgnoreCommaChanged()">
               {{'Ignore commas'|translate}}
             </mat-checkbox>
           </div>
@@ -126,6 +126,7 @@
             <input #userDateInp2 #userDateInp="matAutocompleteTrigger" [matAutocomplete]="auto"
               [matChipInputFor]="chipList" [matChipInputSeparatorKeyCodes]="[13, 32]" [matChipInputAddOnBlur]="false"
               (matChipInputTokenEnd)="addChip($event)" (change)="syncInp()">
+            <mat-hint>{{usrHint}}</mat-hint>
           </mat-chip-list>
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)="timeUnitSelected($event)">
             <mat-option *ngFor="let m of dateUnits">
@@ -141,6 +142,7 @@
             cdkTextareaAutosize #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" [ngModel]='inp'
             (ngModelChange)='changed($event)' cdkAutosizeMaxRows="10" [placeholder]="'inpExpo'|translate">
           </textarea>
+          <mat-hint>{{usrHint}}</mat-hint>
           <!-- buttons which are inline with input -->
           <span matSuffix>
             <span [hidden]="settings.mode != 'date & time'">
@@ -155,9 +157,6 @@
               <mat-icon>history</mat-icon>
             </button>
           </span>
-          <mat-error *ngIf="inpFormCtrl.hasError('invalidExpr')">
-            Please enter a valid email address
-          </mat-error>
         </mat-form-field>
         <div class="centered-div">
           <div *ngIf="settings.mode == 'programmer'">

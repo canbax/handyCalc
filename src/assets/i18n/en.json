@@ -20,5 +20,6 @@
     "second": "second",
     "ms": "millisecond"
   },
-  "inpExpo": "Written expressions will be calculated automatically"
+  "inpExpo": "Written expressions will be calculated automatically",
+  "mathParseError": "Expressions couldn't understood"
 }
